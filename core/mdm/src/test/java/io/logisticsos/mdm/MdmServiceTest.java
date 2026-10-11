@@ -24,7 +24,8 @@ class MdmServiceTest {
     void setUp() {
         ReferenceSink sink = (entity, entry, record, active, sourceSystem) -> published.add(entry);
         ReferenceCodec codec = new ReferenceCodec(new ResourceSchemaResolver());
-        service = new MdmService(new MdmRegistry(), sink, codec, new ObjectMapper());
+        MdmRegistry registry = new MdmRegistry();
+        service = new MdmService(registry, new DirectMdmWrites(registry, sink, codec), codec, new ObjectMapper());
     }
 
     @Test

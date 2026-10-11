@@ -56,5 +56,60 @@ services:
     ports:
       - "8090:8080"
 
+  # PostgreSQL 16 - system-of-record for MDM (jdbc profile) and future services (ADR-0021).
+  # MDM connects with MDM_DB_URL=jdbc:postgresql://localhost:5432/mdm (see ops/local-compose/README.md).
+  postgres:
+    image: postgres:16
+    container_name: logistics-os-postgres
+    environment:
+      POSTGRES_USER: logistics
+      POSTGRES_PASSWORD: logistics
+      POSTGRES_DB: logistics
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./postgres/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U logistics"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  # Keycloak reference IAM (ADR-0020). Imports the logistics-os realm with the web client + roles.
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.0
+    container_name: logistics-os-keycloak
+    command: ["start-dev", "--import-realm"]
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+      KC_HEALTH_ENABLED: "true"
+    ports:
+      - "8091:8080"
+    volumes:
+      - ./keycloak:/opt/keycloak/data/import:ro
+
+  # Ops console. In local dev the SPA usually runs via `npm run dev`; this container mirrors the
+  # k8s deployment (nginx serving the built SPA, reverse-proxying /ops,/auth to bff-ops).
+  web:
+    image: ghcr.io/logistics-os/web:${VERSION:-0.3.0}
+    build:
+      context: ../../web
+    container_name: logistics-os-web
+    depends_on:
+      keycloak:
+        condition: service_started
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      BFF_OPS_URL: "http://host.docker.internal:8088"
+      LOGISTICS_WEB_AUTH_MODE: "${WEB_AUTH_MODE:-local}"
+      LOGISTICS_WEB_OIDC_ISSUER: "${WEB_OIDC_ISSUER:-}"
+      LOGISTICS_WEB_OIDC_CLIENT_ID: "logistics-os-web"
+    ports:
+      - "8092:8080"
+
 volumes:
   kafka-data:
+  postgres-data:

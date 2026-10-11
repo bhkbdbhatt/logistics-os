@@ -5,7 +5,10 @@ namespace: logistics-os
 
 resources:
   - namespace.yaml
+  - secrets.yaml
   - config.yaml
+  - apps/postgres.yaml
+  - apps/keycloak.yaml
   - apps/mdm.yaml
   - apps/ingest-gateway.yaml
   - apps/acl-tms.yaml
@@ -14,6 +17,7 @@ resources:
   - apps/control-tower.yaml
   - apps/bff-ops.yaml
   - apps/legacy-simulator.yaml
+  - apps/web.yaml
   - apps/otel-collector.yaml
   - apps/otel-deployment.yaml
 
@@ -41,3 +45,5 @@ images:
     newTag: 0.2.0
   - name: ghcr.io/logistics-os/orchestrator
     newTag: 0.2.0
+  - name: ghcr.io/logistics-os/web
+    newTag: 0.3.0

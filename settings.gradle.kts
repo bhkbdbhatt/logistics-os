@@ -7,6 +7,8 @@ include("platform:idempotency")
 include("platform:tenant")
 include("platform:observability")
 include("platform:entitlement")
+include("platform:persistence")
+include("platform:security")
 
 include("core:ingest-gateway")
 include("core:acl-tms")

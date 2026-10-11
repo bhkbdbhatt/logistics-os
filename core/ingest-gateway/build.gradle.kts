@@ -13,6 +13,7 @@ dependencies {
     implementation(project(":platform:event-envelope"))
     implementation(project(":platform:kafka-commons"))
     implementation(project(":platform:idempotency"))
+    implementation(project(":platform:security"))
     implementation("org.apache.avro:avro")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")

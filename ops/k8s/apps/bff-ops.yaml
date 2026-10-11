@@ -20,6 +20,11 @@ spec:
           image: ghcr.io/logistics-os/bff-ops:0.2.0
           ports:
             - containerPort: 8088
+          envFrom:
+            - configMapRef:
+                name: logistics-os-env
+            - secretRef:
+                name: logistics-os-secrets
           env:
             - name: SERVER_PORT
               value: "8088"

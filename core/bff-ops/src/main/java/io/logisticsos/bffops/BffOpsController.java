@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -53,6 +54,7 @@ public class BffOpsController {
     }
 
     @PostMapping("/actions/notify-customer")
+    @PreAuthorize("hasRole('OPERATOR')")
     public ResponseEntity<JsonNode> notifyCustomer(@RequestBody NotifyCustomerRequest request) {
         return io.notifyCustomer(request.shipmentId(), request.caseId())
                 .map(ResponseEntity::ok)
@@ -62,6 +64,13 @@ public class BffOpsController {
     @GetMapping("/health")
     public JsonNode health() {
         return mapper.health(io.inventory(), io.towerHealth(), io.mdmLocations());
+    }
+
+    @GetMapping("/entitlement")
+    public ResponseEntity<JsonNode> entitlement() {
+        return io.entitlement()
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.BAD_GATEWAY).build());
     }
 
     private java.util.Optional<JsonNode> locationName(OpsPort io, JsonNode shipment, String field) {

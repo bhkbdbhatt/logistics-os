@@ -1,0 +1,9 @@
+# Activate with SPRING_PROFILES_ACTIVE=jdbc to run MDM as a PostgreSQL system-of-record (ADR-0021).
+spring:
+  datasource:
+    url: ${MDM_DB_URL:jdbc:postgresql://localhost:5432/mdm}
+    username: ${MDM_DB_USER:logistics}
+    password: ${MDM_DB_PASSWORD:logistics}
+  flyway:
+    enabled: true
+    locations: classpath:db/migration,classpath:io/logisticsos/persistence/migration

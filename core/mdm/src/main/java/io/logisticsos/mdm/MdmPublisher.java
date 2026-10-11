@@ -22,8 +22,14 @@ public final class MdmPublisher implements ReferenceSink {
 
     public void publishUpsert(MdmEntities entity, MdmRegistry.Entry entry, GenericRecord record,
             boolean active, String sourceSystem) {
+        template.send(entity.topic(), entry.id(), buildEnvelope(entity, entry, record, active, sourceSystem));
+    }
+
+    /** Builds (without sending) the ReferenceUpserted envelope for the transactional-outbox path. */
+    public EventEnvelope buildEnvelope(MdmEntities entity, MdmRegistry.Entry entry, GenericRecord record,
+            boolean active, String sourceSystem) {
         GenericRecord upsert = codec.toUpsert(entity, record, active, sourceSystem);
-        EventEnvelope envelope = new EventEnvelopeBuilder()
+        return new EventEnvelopeBuilder()
                 .eventType(EVENT_TYPE)
                 .tenantId(entry.tenantId())
                 .aggregateType(entity.aggregateType())
@@ -34,6 +40,5 @@ public final class MdmPublisher implements ReferenceSink {
                 .schemaSubject(codec.upsertSchema().getFullName() + "-value")
                 .payload(PayloadAvro.toBytes(upsert))
                 .build();
-        template.send(entity.topic(), entry.id(), envelope);
     }
 }

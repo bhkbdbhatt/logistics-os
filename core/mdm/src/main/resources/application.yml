@@ -3,10 +3,15 @@ spring:
     name: mdm
   kafka:
     bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+  # Migrations only run under the `jdbc` profile (see application-jdbc.yml).
+  flyway:
+    enabled: false
 
 mdm:
   default-tenant: ${DEFAULT_TENANT:tenant-1}
   seed-enabled: ${MDM_SEED_ENABLED:true}
+  outbox:
+    poll-interval-ms: ${MDM_OUTBOX_POLL_MS:1000}
 
 server:
   port: ${SERVER_PORT:8086}

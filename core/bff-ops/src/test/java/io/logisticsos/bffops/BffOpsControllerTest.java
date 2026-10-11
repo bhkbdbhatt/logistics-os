@@ -99,6 +99,11 @@ class BffOpsControllerTest {
         }
 
         @Override
+        public Optional<JsonNode> entitlement() {
+            return Optional.of(json.createObjectNode().put("edition", "professional"));
+        }
+
+        @Override
         public Optional<JsonNode> notifyCustomer(String shipmentId, String caseId) {
             return Optional.ofNullable(ack);
         }

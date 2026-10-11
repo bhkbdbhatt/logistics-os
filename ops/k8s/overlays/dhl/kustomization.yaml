@@ -35,6 +35,8 @@ images:
     newTag: dhl-0.2.0
   - name: ghcr.io/logistics-os/orchestrator
     newTag: dhl-0.2.0
+  - name: ghcr.io/logistics-os/web
+    newTag: dhl-0.3.0
 
 patches:
   - path: config-patch.yaml

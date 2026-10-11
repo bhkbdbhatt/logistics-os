@@ -4,20 +4,19 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.logisticsos.events.kafka.PayloadAvro;
 import java.util.List;
-import java.util.Optional;
 import org.apache.avro.generic.GenericRecord;
 
-/** Facade over registry + publisher; also produces JSON response structures for the REST API. */
+/** Facade over the golden-record store + write path; also produces JSON response structures for the REST API. */
 public final class MdmService {
 
-    private final MdmRegistry registry;
-    private final ReferenceSink publisher;
+    private final MdmStore store;
+    private final MdmWrites writes;
     private final ReferenceCodec codec;
     private final ObjectMapper json;
 
-    public MdmService(MdmRegistry registry, ReferenceSink publisher, ReferenceCodec codec, ObjectMapper json) {
-        this.registry = registry;
-        this.publisher = publisher;
+    public MdmService(MdmStore store, MdmWrites writes, ReferenceCodec codec, ObjectMapper json) {
+        this.store = store;
+        this.writes = writes;
         this.codec = codec;
         this.json = json;
     }
@@ -25,31 +24,21 @@ public final class MdmService {
     public MdmRegistry.Entry upsert(MdmEntities entity, String id, String canonicalJson, String tenantId,
             String sourceSystem) {
         PayloadAvro.validate(canonicalJson, codec.recordSchema(entity));
-        Optional<MdmRegistry.Entry> existing = registry.get(entity, id);
-        long priorVersion = existing.map(MdmRegistry.Entry::version).orElse(0L);
         GenericRecord record = codec.recordFromJson(entity, canonicalJson);
         String effectiveTenant = tenantId == null || tenantId.isBlank() ? "tenant-1" : tenantId;
-        MdmRegistry.Entry entry = registry.next(entity, id, effectiveTenant, canonicalJson, true);
-        if (entry.version() == priorVersion) {
-            return entry; // idempotent replay of an unchanged golden record
-        }
-        publisher.publishUpsert(entity, entry, record, true, sourceSystem);
-        return entry;
+        return writes.upsert(entity, id, effectiveTenant, canonicalJson, record, sourceSystem);
     }
 
     public MdmRegistry.Entry deactivate(MdmEntities entity, String id, String sourceSystem) {
-        MdmRegistry.Entry entry = registry.deactivate(entity, id);
-        GenericRecord record = codec.recordFromJson(entity, entry.canonicalJson());
-        publisher.publishUpsert(entity, entry, record, false, sourceSystem);
-        return entry;
+        return writes.deactivate(entity, id, sourceSystem);
     }
 
     public java.util.Optional<MdmRegistry.Entry> get(MdmEntities entity, String id) {
-        return registry.get(entity, id);
+        return store.get(entity, id);
     }
 
     public List<MdmRegistry.Entry> list(MdmEntities entity) {
-        return registry.list(entity);
+        return store.list(entity);
     }
 
     public JsonNode asJson(MdmEntities entity, MdmRegistry.Entry entry) {

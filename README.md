@@ -60,6 +60,7 @@ docs/
 ├─ engineering-build.md        # build/test/run/container/deploy runbook (Phase-1 scaffold)
 ├─ release-plan.md             # 0.1.0 scope, DoD, milestones, risks, 0.2.0 backlog
 ├─ release-plan-0.2.0.md       # 0.2.0 scope (images + k8s smoke + MSK + wrapper), DoD, milestones, risks
+├─ release-plan-0.3.0.md       # 0.3.0 scope (frontend + auth + persistence), DoD, milestones, risks
 ├─ releases/
 │  └─ 0.2.0.md                 # 0.2.0 release notes (draft; digests/transcript filled at cut)
 ├─ product/                    # commercial model: editions, licensing, versioning, delivery
@@ -134,7 +135,11 @@ docs/
    ├─ 0015-digital-twin-network-simulation.md
    ├─ 0016-external-integration-contract.md
    ├─ 0017-analytics-tiering-streaming-first.md
-   └─ 0018-autonomous-agent-architecture.md
+   ├─ 0018-autonomous-agent-architecture.md
+   ├─ 0019-repository-and-build-runtime.md
+   ├─ 0020-identity-authentication-authorization.md
+   ├─ 0021-persistence-and-transactional-outbox.md
+   └─ 0022-experience-layer-and-frontend.md
 ```
 
 ## Architecture at a glance

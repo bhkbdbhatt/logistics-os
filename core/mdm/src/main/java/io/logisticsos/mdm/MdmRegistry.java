@@ -10,17 +10,19 @@ import java.util.concurrent.ConcurrentHashMap;
  * production). Version-guarded: an unchanged canonical JSON is an idempotent no-op (no new event,
  * no version bump); a changed record increments the version.
  */
-public final class MdmRegistry {
+public final class MdmRegistry implements MdmStore {
 
     public record Entry(String entity, String id, String tenantId, long version, boolean active, String canonicalJson) {
     }
 
     private final Map<String, Entry> store = new ConcurrentHashMap<>();
 
+    @Override
     public Optional<Entry> get(MdmEntities entity, String id) {
         return Optional.ofNullable(store.get(key(entity, id)));
     }
 
+    @Override
     public List<Entry> list(MdmEntities entity) {
         return store.values().stream()
                 .filter(e -> e.entity().equals(entity.path()))
@@ -32,6 +34,7 @@ public final class MdmRegistry {
      * Returns the entry to persist. A deep-equal, equally-active canonical JSON keeps the existing
      * version (idempotent replay); any change (content or active flag) bumps the version.
      */
+    @Override
     public Entry next(MdmEntities entity, String id, String tenantId, String canonicalJson, boolean active) {
         Optional<Entry> existing = get(entity, id);
         if (existing.isPresent() && existing.get().canonicalJson().equals(canonicalJson)
@@ -44,6 +47,7 @@ public final class MdmRegistry {
         return entry;
     }
 
+    @Override
     public Entry deactivate(MdmEntities entity, String id) {
         Entry existing = store.get(key(entity, id));
         if (existing == null) {
@@ -55,6 +59,7 @@ public final class MdmRegistry {
         return entry;
     }
 
+    @Override
     public int size() {
         return store.size();
     }

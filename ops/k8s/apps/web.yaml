@@ -1,0 +1,58 @@
+# Ops console SPA (ADR-0022): nginx serving the built React app, reverse-proxying /ops,/auth to bff-ops.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+  namespace: logistics-os
+  labels:
+    app.kubernetes.io/name: web
+    app.kubernetes.io/part-of: logistics-os
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: web
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: web
+    spec:
+      containers:
+        - name: web
+          image: ghcr.io/logistics-os/web:0.3.0
+          ports:
+            - containerPort: 8080
+          env:
+            - name: BFF_OPS_URL
+              value: "http://bff-ops.logistics-os.svc.cluster.local:8088"
+            - name: LOGISTICS_WEB_AUTH_MODE
+              value: "oidc"
+            # Browsers must reach this URL directly; front Keycloak with an ingress in production.
+            - name: LOGISTICS_WEB_OIDC_ISSUER
+              value: "http://keycloak.logistics-os.svc.cluster.local:8080/realms/logistics-os"
+            - name: LOGISTICS_WEB_OIDC_CLIENT_ID
+              value: "logistics-os-web"
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          resources:
+            requests: {cpu: "50m", memory: "64Mi"}
+            limits: {cpu: "250m", memory: "128Mi"}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: web
+  namespace: logistics-os
+  labels:
+    app.kubernetes.io/name: web
+    app.kubernetes.io/part-of: logistics-os
+spec:
+  selector:
+    app.kubernetes.io/name: web
+  ports:
+    - port: 80
+      targetPort: 8080

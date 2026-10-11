@@ -28,6 +28,14 @@ spec:
               value: "8086"
             - name: MDM_SEED_ENABLED
               value: "true"
+            # System-of-record mode (ADR-0021).
+            - name: SPRING_PROFILES_ACTIVE
+              value: "jdbc"
+            - name: MDM_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: logistics-os-secrets
+                  key: MDM_DB_PASSWORD
           readinessProbe:
             tcpSocket:
               port: 8086

@@ -5,6 +5,7 @@ import io.logisticsos.entitlement.EntitlementGate;
 import java.util.List;
 import java.util.Map;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -60,6 +61,7 @@ public class TowerController {
     }
 
     @PostMapping("/actions/notify-customer")
+    @PreAuthorize("hasRole('OPERATOR')")
     public Map<String, String> notifyCustomer(@RequestBody NotifyCustomerRequest request,
             @RequestHeader(value = "X-Tenant-Id", required = false) String tenantId) {
         CommandBuilder.Dispatch dispatch = dispatcher.notifyCustomer(request.shipmentId(), tenantId,

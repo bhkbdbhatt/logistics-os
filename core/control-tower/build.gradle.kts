@@ -13,6 +13,7 @@ dependencies {
     implementation(project(":platform:event-envelope"))
     implementation(project(":platform:kafka-commons"))
     implementation(project(":platform:entitlement"))
+    implementation(project(":platform:security"))
     implementation("org.apache.avro:avro")
     implementation("com.fasterxml.jackson.core:jackson-databind")
 

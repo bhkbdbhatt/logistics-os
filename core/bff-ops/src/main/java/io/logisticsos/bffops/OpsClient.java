@@ -6,6 +6,9 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
@@ -13,6 +16,9 @@ import org.springframework.web.client.RestClientException;
 /**
  * Thin HTTP client over the (stateless, read-mostly) upstreams. A 404/connection failure surfaces
  * as {@code Optional.empty()} so the BFF can compose partial views instead of failing the page.
+ *
+ * <p>The caller's bearer token is relayed to upstreams (ADR-0020); downstream services verify it
+ * themselves rather than trusting the BFF.
  */
 @Component
 public class OpsClient implements OpsPort {
@@ -65,10 +71,17 @@ public class OpsClient implements OpsPort {
     }
 
     @Override
+    public Optional<JsonNode> entitlement() {
+        return get(tower, "/tower/entitlement");
+    }
+
+    @Override
     public Optional<JsonNode> notifyCustomer(String shipmentId, String caseId) {
         try {
-            JsonNode ack = tower.post().uri("/tower/actions/notify-customer")
-                    .contentType(MediaType.APPLICATION_JSON)
+            RestClient.RequestBodySpec spec = tower.post().uri("/tower/actions/notify-customer")
+                    .contentType(MediaType.APPLICATION_JSON);
+            bearerToken().ifPresent(token -> spec.header("Authorization", "Bearer " + token));
+            JsonNode ack = spec
                     .body(Map.of("shipmentId", shipmentId, "caseId", caseId == null ? "" : caseId))
                     .retrieve()
                     .body(JsonNode.class);
@@ -81,10 +94,20 @@ public class OpsClient implements OpsPort {
 
     private Optional<JsonNode> get(RestClient client, String uri) {
         try {
-            return Optional.ofNullable(client.get().uri(uri).retrieve().body(JsonNode.class));
+            RestClient.RequestHeadersSpec<?> spec = client.get().uri(uri);
+            bearerToken().ifPresent(token -> spec.header("Authorization", "Bearer " + token));
+            return Optional.ofNullable(spec.retrieve().body(JsonNode.class));
         } catch (RestClientException ex) {
             log.warn("upstream GET {} failed: {}", uri, ex.getMessage());
             return Optional.empty();
         }
+    }
+
+    private Optional<String> bearerToken() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication instanceof JwtAuthenticationToken jwt) {
+            return Optional.of(jwt.getToken().getTokenValue());
+        }
+        return Optional.empty();
     }
 }

@@ -23,6 +23,9 @@ Architecture Decision Records for the Logistics OS. Format: [Michael Nygard](htt
 | [0017](0017-analytics-tiering-streaming-first.md) | Analytics tiering: streaming-first with batch reconciliation | Accepted |
 | [0018](0018-autonomous-agent-architecture.md) | Autonomous agent architecture in the orchestration layer | Accepted |
 | [0019](0019-repository-and-build-runtime.md) | Repository & build runtimes (Gradle/JVM/Kotlin-L5, Avro-as-source, local-first) | Accepted |
+| [0020](0020-identity-authentication-authorization.md) | Identity, authentication & authorization (OIDC/Keycloak + local mode) | Accepted |
+| [0021](0021-persistence-and-transactional-outbox.md) | Persistence & transactional outbox (Postgres/Flyway per service) | Accepted |
+| [0022](0022-experience-layer-and-frontend.md) | Experience layer & frontend (React SPA over BFFs) | Accepted |
 
 ## Status values
 

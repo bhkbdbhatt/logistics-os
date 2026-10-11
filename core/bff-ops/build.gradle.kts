@@ -9,6 +9,7 @@ description = "L6 bff-ops: backend-for-frontend for the operations surface. Comp
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter")
     implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation(project(":platform:security"))
     implementation("com.fasterxml.jackson.core:jackson-databind")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")

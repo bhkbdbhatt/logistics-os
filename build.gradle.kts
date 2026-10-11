@@ -18,7 +18,7 @@ allprojects {
 }
 
 subprojects {
-    if (name in setOf("event-envelope", "kafka-commons", "outbox", "idempotency", "tenant", "observability", "entitlement")) {
+    if (name in setOf("event-envelope", "kafka-commons", "outbox", "idempotency", "tenant", "observability", "entitlement", "persistence", "security")) {
         apply(plugin = "java-library")
     }
 }

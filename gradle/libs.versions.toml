@@ -9,6 +9,7 @@ avro = "1.11.3"
 confluent = "7.6.3"
 postgresql = "42.7.4"
 flyway = "10.20.1"
+h2 = "2.3.232"
 testcontainers = "1.20.4"
 temporal = "1.25.0"
 micrometerTracing = "1.4.1"
@@ -45,10 +46,13 @@ confluent-schema-registry-client = { module = "io.confluent:kafka-schema-registr
 # JSON (framework-agnostic modules that do not inherit the Spring dependency-management BOM)
 jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "jackson" }
 
+# Servlet API (provided at runtime by the container; version managed by the Spring Boot BOM)
+jakarta-servlet-api = { module = "jakarta.servlet:jakarta.servlet-api" }
+
 # Storage / infra
-postgresql = { module = "org.postgresql:postgresql" }
 flyway-core = { module = "org.flywaydb:flyway-core" }
 flyway-database-postgresql = { module = "org.flywaydb:flyway-database-postgresql" }
+postgresql = { module = "org.postgresql:postgresql" }
 
 # Temporal (used by L5 in Phase 2; shipped as a dependency of the stub only)
 temporal-sdk = { module = "io.temporal:temporal-sdk", version.ref = "temporal" }
@@ -65,6 +69,7 @@ assertj = { module = "org.assertj:assertj-core", version.ref = "assertj" }
 testcontainers-junit-jupiter = { module = "org.testcontainers:junit-jupiter", version.ref = "testcontainers" }
 testcontainers-postgresql = { module = "org.testcontainers:postgresql", version.ref = "testcontainers" }
 testcontainers-kafka = { module = "org.testcontainers:kafka", version.ref = "testcontainers" }
+h2 = { module = "com.h2database:h2", version.ref = "h2" }
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }

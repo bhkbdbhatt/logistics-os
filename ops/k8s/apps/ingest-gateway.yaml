@@ -23,6 +23,8 @@ spec:
           envFrom:
             - configMapRef:
                 name: logistics-os-env
+            - secretRef:
+                name: logistics-os-secrets
           env:
             - name: SERVER_PORT
               value: "8081"

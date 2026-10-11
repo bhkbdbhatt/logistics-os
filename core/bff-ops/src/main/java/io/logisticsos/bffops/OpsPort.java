@@ -19,5 +19,7 @@ public interface OpsPort {
 
     java.util.Optional<JsonNode> mdmLocations();
 
+    java.util.Optional<JsonNode> entitlement();
+
     java.util.Optional<JsonNode> notifyCustomer(String shipmentId, String caseId);
 }
