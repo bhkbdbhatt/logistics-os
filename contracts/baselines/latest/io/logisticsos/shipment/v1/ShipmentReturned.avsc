@@ -1,0 +1,14 @@
+{
+  "type": "record",
+  "name": "ShipmentReturned",
+  "namespace": "io.logisticsos.shipment.v1",
+  "fields": [
+    { "name": "shipmentId", "type": "string" },
+    { "name": "returnedAt", "type": {"type":"long","logicalType":"timestamp-millis"} },
+    { "name": "returnLocation", "type": "io.logisticsos.types.LocationRef" },
+    { "name": "reasonCode", "type": "string" },
+    { "name": "quantity", "type": "io.logisticsos.types.Quantity" },
+    { "name": "status", "type": "io.logisticsos.shipment.ShipmentStatus" },
+    { "name": ["null","string"], "name": "returnAuthRef", "default": null }
+  ]
+}

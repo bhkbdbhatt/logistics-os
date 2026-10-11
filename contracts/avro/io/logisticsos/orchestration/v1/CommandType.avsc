@@ -1,0 +1,8 @@
+{
+  "type": "enum",
+  "name": "CommandType",
+  "namespace": "io.logisticsos.orchestration.v1",
+  "symbols": ["REALLOCATE_LABOR", "REBOOK_CARRIER", "REROUTE", "REOPTIMIZE", "RELEASE_RESERVATION",
+              "RESERVE_INVENTORY", "PRIORITIZE_ORDER", "HOLD_ORDER", "NOTIFY_CUSTOMER",
+              "NOTIFY_PARTNER", "ASSIGN_HUMAN", "COMPENSATE", "CLOSE_CASE"]
+}

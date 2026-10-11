@@ -1,0 +1,29 @@
+{
+  "type": "record",
+  "name": "ShipmentPlanned",
+  "namespace": "io.logisticsos.shipment.v1",
+  "fields": [
+    { "name": "shipmentId", "type": "string" },
+    { "name": "planId", "type": "string" },
+    { "name": "mode", "type": "io.logisticsos.shipment.v1.Mode" },
+    { "name": "plannedPickup", "type": {"type":"long","logicalType":"timestamp-millis"} },
+    { "name": "plannedDelivery", "type": {"type":"long","logicalType":"timestamp-millis"} },
+    { "name": "stops", "type": { "type":"array","items":{
+        "type":"record","name":"PlannedStop","fields":[
+          {"name":"sequence","type":"int"},
+          {"name":"location","type":"io.logisticsos.types.LocationRef"},
+          {"name":"type","type":{"type":"enum","name":"StopType",
+            "symbols":["PICKUP","DELIVERY","HUB","CROSS_DOCK"]}},
+          {"name":"window","type":"io.logisticsos.types.TimeWindow"},
+          {"name":"legMode","type":"io.logisticsos.shipment.v1.Mode"}
+        ]}}},
+    { "name": "status", "type": "io.logisticsos.shipment.ShipmentStatus" },
+    { "name": ["null","io.logisticsos.types.CarrierRef"], "name": "carrier", "default": null },
+    { "name": ["null","string"], "name": "loadId", "default": null },
+    { "name": ["null","string"], "name": "equipmentType", "default": null },
+    { "name": ["null","double"], "name": "estimatedDistanceKm", "default": null },
+    { "name": ["null","int"], "name": "estimatedDurationMin", "default": null },
+    { "name": ["null","long"], "name": "co2EstimateGrams", "default": null },
+    { "name": ["null","double"], "name": "optimizationScore", "default": null }
+  ]
+}

@@ -1,0 +1,17 @@
+%% Logistics OS - Carrier selection / allocation scoring
+%% Rendering: Mermaid flowchart. See docs/intelligence/carrier-selection.md
+flowchart TD
+  A["Tender needed (shipment/load)"] --> B["Assemble carrier candidate set\n(lane, mode, equipment, contract)"]
+  B --> C["Remove infeasible\n(hard constraints)"]
+  C --> D["Predict per carrier:\nacceptance prob, expected cost,\ntransit, damage/OTP risk"]
+  D --> E["Utility scoring\nU = w_cost*f(cost) + w_rel*f(reliability) + ... - w_risk*risk"]
+  E --> F{"Single shipment?"}
+  F -- yes --> G["Rank & recommend top-k\n(CARRIER_ASSIGNMENT)"]
+  F -- no --> H["Min-cost flow / auction\nover load set"]
+  H --> I["Recommend allocation\n(CARRIER_ASSIGNMENT)"]
+  G --> J["intel.recommendation.v1"]
+  I --> J
+  J --> K["Orchestration policy\n(auto vs human vs partner)"]
+  K --> L["TenderShipment / RebookCarrier command"]
+  L --> M["Outcome: accept/decline, OTP, cost"]
+  M -. feedback .-> D

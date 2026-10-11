@@ -1,0 +1,11 @@
+{
+  "type": "record",
+  "name": "PartyRef",
+  "namespace": "io.logisticsos.types",
+  "doc": "Generic reference to a customer/carrier/vendor party",
+  "fields": [
+    { "name": "partyId", "type": "string" },
+    { "name": "role",    "type": "string", "doc": "CUSTOMER|CONSIGNEE|CARRIER|SHIPPER|BROKER" },
+    { "name": ["null","string"], "name": "name", "default": null }
+  ]
+}

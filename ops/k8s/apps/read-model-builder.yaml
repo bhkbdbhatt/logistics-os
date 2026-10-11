@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: read-model-builder
+  namespace: logistics-os
+  labels:
+    app.kubernetes.io/name: read-model-builder
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: read-model-builder
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: read-model-builder
+    spec:
+      containers:
+        - name: read-model-builder
+          image: ghcr.io/logistics-os/read-model-builder:0.1.0
+          ports:
+            - containerPort: 8085
+          envFrom:
+            - configMapRef:
+                name: logistics-os-env
+          env:
+            - name: SERVER_PORT
+              value: "8085"
+            - name: STATE_DIR
+              value: "/var/lib/logistics-os/rmb"
+          volumeMounts:
+            - name: rmb-state
+              mountPath: /var/lib/logistics-os/rmb
+          readinessProbe:
+            tcpSocket:
+              port: 8085
+          resources:
+            requests: {cpu: "200m", memory: "384Mi"}
+            limits: {cpu: "1000m", memory: "768Mi"}
+      volumes:
+        - name: rmb-state
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: read-model-builder
+  namespace: logistics-os
+spec:
+  selector:
+    app.kubernetes.io/name: read-model-builder
+  ports:
+    - port: 8085
+      targetPort: 8085

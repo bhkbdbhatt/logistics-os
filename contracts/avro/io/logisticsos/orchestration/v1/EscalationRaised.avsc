@@ -1,0 +1,18 @@
+{
+  "type": "record",
+  "name": "EscalationRaised",
+  "namespace": "io.logisticsos.orchestration.v1",
+  "fields": [
+    { "name": "escalationId", "type": "string" },
+    { "name": "caseId", "type": "string" },
+    { "name": "decisionId", "type": ["null", "string"], "default": null },
+    { "name": "fromLevel", "type": "io.logisticsos.orchestration.v1.EscalationLevel" },
+    { "name": "toLevel", "type": "io.logisticsos.orchestration.v1.EscalationLevel" },
+    { "name": "reason", "type": "io.logisticsos.orchestration.v1.EscalationReason" },
+    { "name": "severity", "type": "io.logisticsos.orchestration.v1.Severity" },
+    { "name": "assignedTo", "type": ["null", "string"], "default": null },
+    { "name": "onCallGroup", "type": ["null", "string"], "default": null },
+    { "name": "deadline", "type": ["null", { "type": "long", "logicalType": "timestamp-millis" }], "default": null },
+    { "name": "raisedAt", "type": { "type": "long", "logicalType": "timestamp-millis" } }
+  ]
+}

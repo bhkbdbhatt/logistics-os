@@ -1,0 +1,17 @@
+{
+  "type": "record",
+  "name": "ShipmentDispatched",
+  "namespace": "io.logisticsos.shipment.v1",
+  "fields": [
+    { "name": "shipmentId", "type": "string" },
+    { "name": "dispatchedAt", "type": {"type":"long","logicalType":"timestamp-millis"} },
+    { "name": "originLocation", "type": "io.logisticsos.types.LocationRef" },
+    { "name": "status", "type": "io.logisticsos.shipment.ShipmentStatus" },
+    { "name": ["null","io.logisticsos.types.VehicleRef"], "name": "vehicle", "default": null },
+    { "name": ["null","io.logisticsos.types.VehicleRef"], "name": "trailer", "default": null },
+    { "name": ["null","io.logisticsos.types.DriverRef"], "name": "driver", "default": null },
+    { "name": ["null","string"], "name": "sealNumber", "default": null },
+    { "name": ["null","long"], "name": "odometerStart", "default": null },
+    { "name": ["null","string"], "name": "gpsProvider", "default": null }
+  ]
+}

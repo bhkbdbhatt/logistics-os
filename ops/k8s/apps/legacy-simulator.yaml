@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: legacy-simulator
+  namespace: logistics-os
+  labels:
+    app.kubernetes.io/name: legacy-simulator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: legacy-simulator
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: legacy-simulator
+    spec:
+      containers:
+        - name: legacy-simulator
+          image: ghcr.io/logistics-os/legacy-simulator:0.1.0
+          ports:
+            - containerPort: 8089
+          envFrom:
+            - configMapRef:
+                name: logistics-os-env
+          env:
+            - name: SERVER_PORT
+              value: "8089"
+            - name: SIMULATOR_ENABLED
+              value: "true"
+          resources:
+            requests: {cpu: "100m", memory: "128Mi"}
+            limits: {cpu: "300m", memory: "256Mi"}

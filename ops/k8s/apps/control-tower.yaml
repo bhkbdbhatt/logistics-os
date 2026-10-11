@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: control-tower
+  namespace: logistics-os
+  labels:
+    app.kubernetes.io/name: control-tower
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: control-tower
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: control-tower
+    spec:
+      containers:
+        - name: control-tower
+          image: ghcr.io/logistics-os/control-tower:0.1.0
+          ports:
+            - containerPort: 8087
+          envFrom:
+            - configMapRef:
+                name: logistics-os-env
+          env:
+            - name: SERVER_PORT
+              value: "8087"
+          readinessProbe:
+            tcpSocket:
+              port: 8087
+          resources:
+            requests: {cpu: "100m", memory: "256Mi"}
+            limits: {cpu: "500m", memory: "512Mi"}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: control-tower
+  namespace: logistics-os
+spec:
+  selector:
+    app.kubernetes.io/name: control-tower
+  ports:
+    - port: 8087
+      targetPort: 8087

@@ -1,0 +1,10 @@
+{
+  "type": "record",
+  "name": "DriverRef",
+  "namespace": "io.logisticsos.types",
+  "fields": [
+    { "name": "driverId", "type": "string" },
+    { "name": ["null","string"], "name": "name", "default": null },
+    { "name": ["null","string"], "name": "phone", "default": null }
+  ]
+}

@@ -1,0 +1,81 @@
+%% Logistics OS - Shipment lifecycle: order -> POD -> settlement (all touchpoints)
+%% Rendering: Mermaid sequenceDiagram. See docs/integration-architecture.md and docs/events.md.
+sequenceDiagram
+  autonumber
+  participant CH as Channel / EDI
+  participant OMS as OMS
+  participant ORCH as Orchestrator (L5)
+  participant ERP as ERP (SAP/Oracle)
+  participant ATP as ATP/Promise
+  participant INTEL as Intelligence (L4)
+  participant WMS as WMS
+  participant WCS as WCS / Automation
+  participant TMS as TMS
+  participant CAR as Carrier API / EDI
+  participant DRV as Driver Mobile
+  participant VIS as Visibility
+  participant CUST as Customer Tracking
+  participant FIN as Billing
+  participant BUS as Kafka Backbone
+
+  Note over CH,BUS: ---- 1. ORDER ----
+  CH->>OMS: SubmitOrder (sync REST/EDI 850)
+  OMS->>ERP: credit check + customer master (sync)
+  ERP-->>OMS: credit OK / limit (idempotent read)
+  OMS->>BUS: ord.order.created.v1 (async)
+  OMS-->>CH: order accepted (sync, submitToken dedupe)
+  BUS->>ORCH: order.created -> start workflow
+
+  Note over CH,BUS: ---- 2. PROMISE ----
+  ORCH->>ATP: ReserveAtp(order)
+  ATP->>INTEL: GetEta / GetPlacement
+  ORCH->>CAR: rate request (sync REST, token-bucket, cache)
+  CAR-->>ORCH: quoted rate
+  ORCH->>BUS: orch.promise.v1
+  ORCH->>ERP: post sales order / cost accrual (async, key=docRef)
+  ERP-->>BUS: erp: salesOrder/accrual ack (doc# mapped)
+
+  Note over CH,BUS: ---- 3. FULFILL ----
+  ORCH->>WMS: Allocate + Pick (command, commandId)
+  WMS->>WCS: dispatch conveyor/AGV task (sync gRPC handshake)
+  WCS-->>WMS: task ack + device status (taskId idempotent)
+  WCS->>WMS: scan / move confirmations
+  WMS->>BUS: wms.task.events.v1
+  WMS->>BUS: inv.inventory.events.v1 (exactly-once effects)
+
+  Note over CH,BUS: ---- 4. TENDER & SHIP ----
+  ORCH->>TMS: TenderShipment (command)
+  TMS->>CAR: create shipment + label (sync; Idempotency-Key=tenderId)
+  CAR-->>TMS: tracking# / pro# + label (ZPL/PDF)
+  TMS->>BUS: tms.tender.events.v1
+  TMS->>BUS: tms.shipment.events.v1 (dispatched)
+
+  Note over CH,BUS: ---- 5. DISPATCH / PICKUP ----
+  ORCH->>DRV: push manifest (FCM/APNs)
+  DRV->>DRV: capture pickup scans (offline queue)
+  DRV->>BUS: sync scans/status (client UUID dedupe)
+
+  Note over CH,BUS: ---- 6. IN TRANSIT ----
+  CAR-->>BUS: status webhooks / EDI 214 (provider event id dedupe)
+  BUS->>VIS: raw carrier status -> normalize
+  VIS->>BUS: vis.milestone.events.v1
+  BUS->>ORCH: milestone/ETA signals (triggers, re-opt)
+
+  Note over CH,BUS: ---- 7. POD ----
+  DRV->>DRV: capture POD: signature + photo + scan (offline)
+  DRV->>BUS: delta sync POD (client UUID, append-only evidence)
+  VIS->>BUS: vis.milestone.events.v1 (delivered)
+  BUS->>CUST: webhook + SSE/WS + EDI 214 (HMAC, retry->DLQ)
+  BUS->>FIN: shipment.delivered -> accrue charge
+
+  Note over CH,BUS: ---- 8. SETTLEMENT ----
+  FIN->>BUS: fin.charge.events.v1 (accrual)
+  CAR-->>FIN: carrier invoice EDI 210 / webhook
+  FIN->>FIN: freight audit + match (invoice# dedupe)
+  FIN->>ERP: post GL settlement (async; idempotencyKey=settlementId)
+  ERP-->>FIN: GL document# (mapped, exactly-once effects)
+  FIN->>BUS: fin.settlement.events.v1 (pay/charge)
+  FIN->>ERP: post customer invoice (AR)
+  FIN->>CUST: invoice notification (async)
+
+  Note over CH,BUS: Exceptions on any leg -> orch.exception.v1 (L6 control tower + L4)

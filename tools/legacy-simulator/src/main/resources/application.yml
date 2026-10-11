@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: legacy-simulator
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      acks: all
+
+simulator:
+  enabled: ${SIMULATOR_ENABLED:true}
+  interval-millis: ${SIMULATOR_INTERVAL_MS:2000}
+  tenant-id: ${SIMULATOR_TENANT:acme}
+  working-set: ${SIMULATOR_WORKING_SET:50}
+
+server:
+  port: ${SERVER_PORT:8089}

@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: mdm
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+
+mdm:
+  default-tenant: ${DEFAULT_TENANT:tenant-1}
+  seed-enabled: ${MDM_SEED_ENABLED:true}
+
+server:
+  port: ${SERVER_PORT:8086}

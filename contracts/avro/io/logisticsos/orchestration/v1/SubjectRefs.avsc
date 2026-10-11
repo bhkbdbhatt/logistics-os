@@ -1,0 +1,13 @@
+{
+  "type": "record",
+  "name": "SubjectRefs",
+  "namespace": "io.logisticsos.orchestration.v1",
+  "fields": [
+    { "name": ["null", {"type": "array", "items": "string"}], "name": "shipmentIds", "default": null },
+    { "name": ["null", {"type": "array", "items": "string"}], "name": "loadIds", "default": null },
+    { "name": ["null", {"type": "array", "items": "string"}], "name": "orderIds", "default": null },
+    { "name": ["null", {"type": "array", "items": "string"}], "name": "inventoryIds", "default": null },
+    { "name": ["null", {"type": "array", "items": "io.logisticsos.types.LocationRef"}], "name": "locations", "default": null },
+    { "name": ["null", "string"], "name": "nodeId", "default": null }
+  ]
+}

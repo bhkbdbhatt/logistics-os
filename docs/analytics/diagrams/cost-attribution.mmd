@@ -1,0 +1,43 @@
+%% Logistics OS - Shipment cost attribution (real-time estimate -> batch true-up)
+%% Rendering: Mermaid flowchart. See docs/analytics/cost-attribution.md
+flowchart LR
+  subgraph Sources["Cost sources"]
+    S1["Rate cards / fin.charge"]
+    S2["Carrier invoice / fin.bill"]
+    S3["Milestones / WMS actuals"]
+    S4["Labor / timesheets"]
+    S5["Fixed-asset / finance pools"]
+  end
+
+  subgraph Model["Attribution model"]
+    M1["Direct (traced)\nshipment/load/order keys"]
+    M2["Allocated variable\ndriver: mile/weight/cube/stop"]
+    M3["Fixed (ABC)\nstandard rate x driver qty"]
+  end
+
+  subgraph Engine["Compute tiers"]
+    E0["T0 tentative\nat plan/dispatch"]
+    E1["T1/T2 refined\nat POD/actuals"]
+    E3["T3 true-up\ninvoice/timesheet/close"]
+  end
+
+  OUT["analytics.cost.attribution.v1\nTENTATIVE -> REFINED -> TRUED_UP -> FINAL"]
+  REC["Reconcile vs Billing\n(additivity, variance < 0.5%)"]
+  CT["Control tower\nrunning cost-to-serve / margin-at-risk"]
+
+  S1 --> M1
+  S2 --> M1
+  S3 --> M2
+  S4 --> M2
+  S5 --> M3
+  M1 --> E0
+  M2 --> E1
+  M3 --> E0
+  S2 --> E3
+  S4 --> E3
+  E0 --> OUT
+  E1 --> OUT
+  E3 --> OUT
+  OUT --> REC
+  OUT --> CT
+  REC -. alert variance .-> CT

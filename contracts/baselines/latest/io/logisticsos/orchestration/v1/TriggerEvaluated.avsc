@@ -1,0 +1,21 @@
+{
+  "type": "record",
+  "name": "TriggerEvaluated",
+  "namespace": "io.logisticsos.orchestration.v1",
+  "doc": "Emitted when a trigger rule matches on the event stream or a timer fires.",
+  "fields": [
+    { "name": "triggerId", "type": "string" },
+    { "name": "type", "type": "io.logisticsos.orchestration.v1.TriggerType" },
+    { "name": "severity", "type": "io.logisticsos.orchestration.v1.Severity" },
+    { "name": "ruleId", "type": "string" },
+    { "name": "ruleVersion", "type": "int" },
+    { "name": "subject", "type": "io.logisticsos.orchestration.v1.SubjectRefs" },
+    { "name": "condition", "type": "string" },
+    { "name": "matched", "type": "boolean" },
+    { "name": "cascadeTemplate", "type": ["null", "string"], "default": null },
+    { "name": "dedupeKey", "type": "string" },
+    { "name": ["null", {"type": "long", "logicalType": "timestamp-millis"}], "name": "windowStart", "default": null },
+    { "name": ["null", {"type": "long", "logicalType": "timestamp-millis"}], "name": "windowEnd", "default": null },
+    { "name": ["null", "string"], "name": "sourceEventId", "default": null }
+  ]
+}

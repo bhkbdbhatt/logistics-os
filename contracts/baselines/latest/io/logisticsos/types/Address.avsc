@@ -1,0 +1,14 @@
+{
+  "type": "record",
+  "name": "Address",
+  "namespace": "io.logisticsos.types",
+  "fields": [
+    { "name": "line1",        "type": "string" },
+    { "name": ["null","string"], "name": "line2", "default": null },
+    { "name": "city",         "type": "string" },
+    { "name": ["null","string"], "name": "region", "default": null },
+    { "name": "postalCode",   "type": "string" },
+    { "name": "country",      "type": "string", "doc": "ISO-3166-1 alpha-2" },
+    { "name": ["null","io.logisticsos.types.GeoPoint"], "name": "geo", "default": null }
+  ]
+}

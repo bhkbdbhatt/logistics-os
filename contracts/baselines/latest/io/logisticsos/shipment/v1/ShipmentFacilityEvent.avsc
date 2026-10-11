@@ -1,0 +1,18 @@
+{
+  "type": "record",
+  "name": "ShipmentFacilityEvent",
+  "namespace": "io.logisticsos.shipment.v1",
+  "doc": "Payload for ShipmentArrivedAtFacility (arrivedAt set) and ShipmentDepartedFacility (departedAt set). Resolved by eventType via payload-registry.json.",
+  "fields": [
+    { "name": "shipmentId", "type": "string" },
+    { "name": "facility", "type": "io.logisticsos.types.LocationRef" },
+    { "name": "legIndex", "type": "int" },
+    { "name": "mode", "type": "io.logisticsos.shipment.v1.Mode" },
+    { "name": "status", "type": "io.logisticsos.shipment.ShipmentStatus" },
+    { "name": "arrivedAt", "type": ["null", {"type":"long","logicalType":"timestamp-millis"}], "default": null },
+    { "name": "departedAt", "type": ["null", {"type":"long","logicalType":"timestamp-millis"}], "default": null },
+    { "name": ["null","io.logisticsos.types.VehicleRef"], "name": "vehicle", "default": null },
+    { "name": ["null","io.logisticsos.types.LocationRef"], "name": "dock", "default": null },
+    { "name": ["null","int"], "name": "dwellMinutes", "default": null }
+  ]
+}

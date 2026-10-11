@@ -1,0 +1,7 @@
+{
+  "type": "enum",
+  "name": "DecisionType",
+  "namespace": "io.logisticsos.orchestration.v1",
+  "symbols": ["LABOR_REALLOCATION", "CARRIER_REBOOK", "REROUTE", "REOPTIMIZE",
+              "CUSTOMER_NOTIFY", "PRIORITIZE", "COMPENSATE", "OTHER"]
+}

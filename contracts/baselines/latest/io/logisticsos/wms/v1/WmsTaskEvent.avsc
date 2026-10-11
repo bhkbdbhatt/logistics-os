@@ -1,0 +1,22 @@
+{
+  "type": "record",
+  "name": "WmsTaskEvent",
+  "namespace": "io.logisticsos.wms.v1",
+  "doc": "Scaffold-level WMS task state change (canonicalization pending). Emitted by acl-wms from legacy WMS feeds; consumers key on taskId.",
+  "fields": [
+    { "name": "taskId", "type": "string" },
+    { "name": "taskType", "type": { "type": "enum", "name": "TaskType",
+        "symbols": ["RECEIVE", "PUTAWAY", "PICK", "PACK", "STAGE", "LOAD", "CYCLE_COUNT", "REPLENISH"] } },
+    { "name": "status", "type": { "type": "enum", "name": "TaskStatus",
+        "symbols": ["CREATED", "ASSIGNED", "IN_PROGRESS", "COMPLETED", "CANCELLED", "EXCEPTION"] } },
+    { "name": "nodeId", "type": "string", "doc": "warehouse/location node; partition key" },
+    { "name": "orderId", "type": ["null", "string"], "default": null },
+    { "name": "inventoryRef", "type": ["null", "io.logisticsos.types.LocationRef"], "default": null },
+    { "name": "locationId", "type": ["null", "string"], "default": null },
+    { "name": "quantity", "type": ["null", "io.logisticsos.types.Quantity"], "default": null },
+    { "name": "assignedWorkerId", "type": ["null", "string"], "default": null },
+    { "name": ["null", {"type":"long","logicalType":"timestamp-millis"}], "name": "startedAt", "default": null },
+    { "name": ["null", {"type":"long","logicalType":"timestamp-millis"}], "name": "completedAt", "default": null },
+    { "name": "occurredAt", "type": {"type":"long","logicalType":"timestamp-millis"} }
+  ]
+}

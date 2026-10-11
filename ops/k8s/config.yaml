@@ -1,0 +1,13 @@
+# Shared non-secret configuration applied to every Logistics OS workload.
+# Secrets (Kafka auth, etc.) belong in a Secret, not here.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: logistics-os-env
+  namespace: logistics-os
+  labels:
+    app.kubernetes.io/part-of: logistics-os
+data:
+  KAFKA_BOOTSTRAP_SERVERS: "logistics-os-kafka:9092"
+  DEFAULT_TENANT: "tenant-1"
+  OTEL_EXPORTER_OTLP_ENDPOINT: "http://otel-collector:4317"

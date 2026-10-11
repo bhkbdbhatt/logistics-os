@@ -1,0 +1,17 @@
+{
+  "type": "record",
+  "name": "DecisionRequested",
+  "namespace": "io.logisticsos.orchestration.v1",
+  "fields": [
+    { "name": "decisionId", "type": "string" },
+    { "name": "caseId", "type": "string" },
+    { "name": "decisionType", "type": "io.logisticsos.orchestration.v1.DecisionType" },
+    { "name": "autonomyTier", "type": "io.logisticsos.orchestration.v1.AutonomyTier" },
+    { "name": "routedTo", "type": { "type": "enum", "name": "DecisionRoute",
+        "symbols": ["AUTO", "HUMAN", "PARTNER"] } },
+    { "name": "assignee", "type": ["null", "string"], "default": null },
+    { "name": "slaDeadline", "type": ["null", { "type": "long", "logicalType": "timestamp-millis" }], "default": null },
+    { "name": "context", "type": "io.logisticsos.orchestration.v1.DecisionContext" },
+    { "name": "requestedAt", "type": { "type": "long", "logicalType": "timestamp-millis" } }
+  ]
+}

@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: acl-wms
+  namespace: logistics-os
+  labels:
+    app.kubernetes.io/name: acl-wms
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: acl-wms
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: acl-wms
+    spec:
+      containers:
+        - name: acl-wms
+          image: ghcr.io/logistics-os/acl-wms:0.1.0
+          ports:
+            - containerPort: 8084
+          envFrom:
+            - configMapRef:
+                name: logistics-os-env
+          env:
+            - name: SERVER_PORT
+              value: "8084"
+          readinessProbe:
+            tcpSocket:
+              port: 8084
+          resources:
+            requests: {cpu: "100m", memory: "256Mi"}
+            limits: {cpu: "500m", memory: "512Mi"}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: acl-wms
+  namespace: logistics-os
+spec:
+  selector:
+    app.kubernetes.io/name: acl-wms
+  ports:
+    - port: 8084
+      targetPort: 8084

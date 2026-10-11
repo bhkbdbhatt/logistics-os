@@ -1,0 +1,36 @@
+# Gradle
+.gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+gradle/wrapper/gradle-wrapper.jar
+
+# IDE
+.idea/
+*.iml
+.vscode/
+.classpath
+.project
+.settings/
+bin/
+out/
+
+# Env / secrets
+.env
+.env.local
+*.pem
+*.key
+*.crt
+
+# Test artifacts
+test-output/
+hs_err_pid*
+replay_pid*
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Generated
+contracts/generated/
+baselines/**/tmp/

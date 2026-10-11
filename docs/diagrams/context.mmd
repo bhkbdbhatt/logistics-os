@@ -1,0 +1,41 @@
+%% Logistics OS - System context (C4-lite)
+%% Rendering: Mermaid flowchart. See docs/architecture.md.
+flowchart LR
+  subgraph Actors["Actors"]
+    CUST["Customer / Shipper"]
+    OPS["3PL Operations"]
+    DRV["Driver / Associate"]
+    PARTNER["Carrier / 3PL Partner"]
+  end
+
+  subgraph Platform["Logistics OS (this platform)"]
+    EXP["Experience (portals/apps)"]
+    BUS["Kafka Event Backbone"]
+    CORE["TMS/WMS/YMS/OMS/Visibility/Billing"]
+    BRAIN["Orchestration + Intelligence"]
+    DATA["Data platform"]
+  end
+
+  subgraph External["External systems"]
+    COMM["Commerce / ERP"]
+    EDI["EDI value network (214/210/204/990)"]
+    CARRIER["Carrier APIs"]
+    VIS3["Visibility vendors (project44/FourKites)"]
+    TAX["Tax / Payment"]
+    WX["Weather / Traffic / Map"]
+  end
+
+  CUST --> EXP
+  OPS --> EXP
+  DRV --> EXP
+  PARTNER --> EXP
+  EXP --> BUS
+  BUS <--> CORE
+  BUS <--> BRAIN
+  BUS <--> DATA
+  CORE <--> COMM
+  CORE <--> EDI
+  CORE <--> CARRIER
+  CORE <--> VIS3
+  CORE <--> TAX
+  BUS <--> WX

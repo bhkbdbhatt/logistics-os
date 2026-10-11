@@ -1,0 +1,17 @@
+{
+  "type": "record",
+  "name": "ShipmentTenderAccepted",
+  "namespace": "io.logisticsos.shipment.v1",
+  "fields": [
+    { "name": "shipmentId", "type": "string" },
+    { "name": "tenderId", "type": "string" },
+    { "name": "carrier", "type": "io.logisticsos.types.CarrierRef" },
+    { "name": "acceptedRate", "type": "io.logisticsos.types.Money" },
+    { "name": "acceptedAt", "type": {"type":"long","logicalType":"timestamp-millis"} },
+    { "name": "status", "type": "io.logisticsos.shipment.ShipmentStatus" },
+    { "name": ["null","io.logisticsos.types.VehicleRef"], "name": "vehicle", "default": null },
+    { "name": ["null","io.logisticsos.types.DriverRef"], "name": "driver", "default": null },
+    { "name": ["null","string"], "name": "driverPhone", "default": null },
+    { "name": ["null",{"type":"long","logicalType":"timestamp-millis"}], "name": "etaPickup", "default": null }
+  ]
+}

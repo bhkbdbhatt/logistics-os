@@ -1,0 +1,19 @@
+{
+  "type": "record",
+  "name": "ShipmentTendered",
+  "namespace": "io.logisticsos.shipment.v1",
+  "fields": [
+    { "name": "shipmentId", "type": "string" },
+    { "name": "tenderId", "type": "string" },
+    { "name": "carrier", "type": "io.logisticsos.types.CarrierRef" },
+    { "name": "offeredRate", "type": "io.logisticsos.types.Money" },
+    { "name": "tenderSequence", "type": "int" },
+    { "name": "expiresAt", "type": {"type":"long","logicalType":"timestamp-millis"} },
+    { "name": "tenderMethod", "type": {"type":"enum","name":"TenderMethod",
+        "symbols":["EDI_204","API","EMAIL","PORTAL"]} },
+    { "name": "status", "type": "io.logisticsos.shipment.ShipmentStatus" },
+    { "name": ["null",{"type":"array","items":"io.logisticsos.types.CarrierRef"}],
+      "name": "alternateCarriers", "default": null },
+    { "name": ["null","string"], "name": "notes", "default": null }
+  ]
+}

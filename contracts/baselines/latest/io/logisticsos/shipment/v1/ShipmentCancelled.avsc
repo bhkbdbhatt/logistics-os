@@ -1,0 +1,13 @@
+{
+  "type": "record",
+  "name": "ShipmentCancelled",
+  "namespace": "io.logisticsos.shipment.v1",
+  "fields": [
+    { "name": "shipmentId", "type": "string" },
+    { "name": "cancelledAt", "type": {"type":"long","logicalType":"timestamp-millis"} },
+    { "name": "reasonCode", "type": "string", "doc": "CUSTOMER|CAPACITY|FRAUD|DUPLICATE|OTHER" },
+    { "name": "status", "type": "io.logisticsos.shipment.ShipmentStatus" },
+    { "name": ["null","string"], "name": "cancelledBy", "default": null },
+    { "name": ["null","io.logisticsos.types.Money"], "name": "cancellationFee", "default": null }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "type": "record",
+  "name": "Contact",
+  "namespace": "io.logisticsos.types",
+  "doc": "Shared by Customer and Location golden records (namespace aligned per reference-data.md).",
+  "fields": [
+    { "name": "name", "type": "string" },
+    { "name": ["null","string"], "name": "email", "default": null },
+    { "name": ["null","string"], "name": "phone", "default": null },
+    { "name": ["null","string"], "name": "role", "default": null }
+  ]
+}

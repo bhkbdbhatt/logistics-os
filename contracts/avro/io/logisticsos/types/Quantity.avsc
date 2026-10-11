@@ -1,0 +1,12 @@
+{
+  "type": "record",
+  "name": "Quantity",
+  "namespace": "io.logisticsos.types",
+  "fields": [
+    { "name": "value", "type": "double" },
+    { "name": "uom", "type": { "type": "enum", "name": "Uom",
+      "symbols": ["EA","CS","PLT","KG","LB","M3","FT3","L","GAL"] } },
+    { "name": ["null","double"], "name": "uomConversion", "default": null,
+      "doc": "Multiplier to base uom, if applicable" }
+  ]
+}

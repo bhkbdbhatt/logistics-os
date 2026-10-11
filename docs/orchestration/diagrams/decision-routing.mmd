@@ -1,0 +1,28 @@
+%% Logistics OS - Decision routing (auto vs human vs partner)
+%% Rendering: Mermaid flowchart. See docs/orchestration/decision-context.md and escalation.md
+flowchart TD
+  A["DecisionContext assembled"] --> B{"Policy permits automation?"}
+  B -- no --> H["Route to HUMAN\n(L3 human-only)"]
+  B -- yes --> C{"Confidence >= autoThreshold?"}
+  C -- no --> H
+  C -- yes --> D{"Cost impact <= autoBudget?"}
+  D -- no --> H
+  D -- yes --> E{"Regulated / safety / hazmat?"}
+  E -- yes --> H
+  E -- no --> F{"Partner ack required?"}
+  F -- yes --> P["Route to PARTNER\n(AWAITING_PARTNER)"]
+  F -- no --> G{"Autonomy tier?"}
+  G -- L0/L1 --> AUTO["AUTO_EXECUTE\n(notify on L1)"]
+  G -- L2 --> H
+  H --> H2["Human task + SLA timer"]
+  H2 --> HR{"Ack before SLA?"}
+  HR -- yes --> HO["Human decision applied"]
+  HR -- no --> ESC["ESCALATE (next tier / on-call)"]
+  P --> PR{"Ack before SLA?"}
+  PR -- yes --> PO2["Proceed"]
+  PR -- no --> ESC
+  AUTO --> AUD["Record DecisionRecord"]
+  HO --> AUD
+  PO2 --> AUD
+  ESC --> AUD
+  AUD --> Z["Audit + explainability + metrics"]

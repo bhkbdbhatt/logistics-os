@@ -1,0 +1,30 @@
+{
+  "type": "record",
+  "name": "Carrier",
+  "namespace": "io.logisticsos.mdm.record.v1",
+  "fields": [
+    { "name": "carrierId", "type": "string" },
+    { "name": "tenantId", "type": "string" },
+    { "name": "name", "type": "string" },
+    { "name": "status", "type": {"type":"enum","name":"CarrierStatus",
+        "symbols":["ACTIVE","ONBOARDING","SUSPENDED","OFFBOARDED"]} },
+    { "name": "modes", "type": {"type":"array","items":"io.logisticsos.shipment.v1.Mode"} },
+    { "name": "contact", "type": "io.logisticsos.types.Contact" },
+    { "name": ["null","string"], "name": "scac", "default": null },
+    { "name": ["null","string"], "name": "mcNumber", "default": null },
+    { "name": ["null","string"], "name": "dotNumber", "default": null },
+    { "name": ["null",{"type":"array","items":"string"}], "name": "serviceLevels", "default": null },
+    { "name": ["null",{"type":"array","items":"io.logisticsos.types.Address"}], "name": "addresses", "default": null },
+    { "name": ["null",{"type":"record","name":"Insurance","fields":[
+        {"name":"policyNumber","type":"string"},
+        {"name":"coverage","type":"io.logisticsos.types.Money"},
+        {"name":"expiresAt","type":{"type":"long","logicalType":"timestamp-millis"}}]}],
+      "name": "insurance", "default": null },
+    { "name": ["null","string"], "name": "authorityStatus", "default": null },
+    { "name": ["null",{"type":"array","items":"string"}], "name": "ediCapabilities", "default": null },
+    { "name": ["null","string"], "name": "apiCredentialsRef", "default": null, "doc": "vault path; never the secret" },
+    { "name": ["null","double"], "name": "performanceScore", "default": null },
+    { "name": ["null","int"], "name": "fleetSize", "default": null },
+    { "name": ["null",{"type":"array","items":"string"}], "name": "certifications", "default": null }
+  ]
+}

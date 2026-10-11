@@ -1,0 +1,18 @@
+{
+  "type": "record",
+  "name": "Scan",
+  "namespace": "io.logisticsos.obs.v1",
+  "doc": "Scaffold-level scan payload (canonicalization pending). Consumed from scanners/capture on obs.scan.v1.",
+  "fields": [
+    { "name": "scanId", "type": "string" },
+    { "name": "locationId", "type": "string" },
+    { "name": "deviceId", "type": "string" },
+    { "name": "scanAt", "type": { "type": "long", "logicalType": "timestamp-millis" } },
+    { "name": "scanType", "type": { "type": "enum", "name": "ScanType",
+        "symbols": ["INBOUND_RECEIPT","PUTAWAY","PICK","PACK","LOAD","STAGE","CYCLE_COUNT","OUTBOUND_DEPART","POD"] } },
+    { "name": "refType", "type": "string", "doc": "SHIPMENT|ORDER|INVENTORY|LOAD|LOCATION" },
+    { "name": "refId", "type": "string" },
+    { "name": "operatorId", "type": "string" },
+    { "name": "quantity", "type": "io.logisticsos.types.Quantity" }
+  ]
+}

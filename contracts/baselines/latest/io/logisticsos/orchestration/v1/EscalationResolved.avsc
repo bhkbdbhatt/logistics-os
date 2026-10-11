@@ -1,0 +1,13 @@
+{
+  "type": "record",
+  "name": "EscalationResolved",
+  "namespace": "io.logisticsos.orchestration.v1",
+  "fields": [
+    { "name": "escalationId", "type": "string" },
+    { "name": "caseId", "type": "string" },
+    { "name": "resolution", "type": "string", "doc": "ACKED_AND_ACTED | DEESCALATED | REASSIGNED | AUTO_RESUMED" },
+    { "name": "resolvedBy", "type": ["null", "string"], "default": null },
+    { "name": "timeToAckMs", "type": ["null", "long"], "default": null },
+    { "name": "resolvedAt", "type": { "type": "long", "logicalType": "timestamp-millis" } }
+  ]
+}

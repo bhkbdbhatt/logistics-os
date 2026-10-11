@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bff-ops
+  namespace: logistics-os
+  labels:
+    app.kubernetes.io/name: bff-ops
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: bff-ops
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: bff-ops
+    spec:
+      containers:
+        - name: bff-ops
+          image: ghcr.io/logistics-os/bff-ops:0.1.0
+          ports:
+            - containerPort: 8088
+          env:
+            - name: SERVER_PORT
+              value: "8088"
+            - name: READ_MODEL_BASE_URL
+              value: "http://read-model-builder:8085"
+            - name: TOWER_BASE_URL
+              value: "http://control-tower:8087"
+            - name: MDM_BASE_URL
+              value: "http://mdm:8086"
+          readinessProbe:
+            tcpSocket:
+              port: 8088
+          resources:
+            requests: {cpu: "100m", memory: "256Mi"}
+            limits: {cpu: "500m", memory: "512Mi"}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bff-ops
+  namespace: logistics-os
+spec:
+  selector:
+    app.kubernetes.io/name: bff-ops
+  ports:
+    - port: 8088
+      targetPort: 8088

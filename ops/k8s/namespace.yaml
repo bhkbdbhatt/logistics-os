@@ -1,0 +1,8 @@
+# Logistics OS deployment namespace.
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: logistics-os
+  labels:
+    app.kubernetes.io/part-of: logistics-os

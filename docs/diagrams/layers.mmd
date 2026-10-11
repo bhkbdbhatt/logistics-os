@@ -1,0 +1,36 @@
+%% Logistics OS - Layered Architecture
+%% Rendering: Mermaid flowchart. See docs/architecture.md for prose.
+flowchart TB
+  subgraph L7["7. Analytics / AI"]
+    A7["Lakehouse (bronze/silver/gold) - Semantic layer - ML - Digital twin"]
+  end
+  subgraph L6["6. Experience"]
+    A6["Customer portal - Ops console - Driver/Associate app - Partner/API portal"]
+  end
+  subgraph L5["5. Orchestration"]
+    A5["Saga engine - Control tower - ATP/Promise - Routing - Exceptions - Policy"]
+  end
+  subgraph L4["4. Intelligence"]
+    A4["Forecasting - Predictive ETA - Slotting - Placement - Optimization - Anomaly"]
+  end
+  subgraph L3["3. Execution"]
+    A3["OMS | TMS | WMS | YMS | Visibility | Billing"]
+  end
+  subgraph L2["2. Data"]
+    A2["Kafka backbone - Event store - Canonical models - CQRS read models - MDM - CDC"]
+  end
+  subgraph L1["1. Observation"]
+    A1["IoT/telematics - GPS - Scanners - Cameras - EDI/API feeds - Weather/Traffic - Edge gateways"]
+  end
+
+  L1 --> L2 --> L4
+  L3 --> L2
+  L2 --> L5
+  L2 --> L6
+  L2 --> L7
+  L5 --> L3
+  L4 --> L5
+  L7 --> L5
+
+  X["Cross-cutting: Identity/IAM - API Gateway - Observability - Secrets - Multi-tenancy - Schema Registry - Feature Store - Policy"]
+  X -.-> L2

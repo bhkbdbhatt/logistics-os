@@ -1,0 +1,6 @@
+{
+  "type": "enum",
+  "name": "Mode",
+  "namespace": "io.logisticsos.shipment.v1",
+  "symbols": ["FTL","LTL","PARCEL","LAST_MILE","RAIL","OCEAN","AIR","MULTIMODAL"]
+}

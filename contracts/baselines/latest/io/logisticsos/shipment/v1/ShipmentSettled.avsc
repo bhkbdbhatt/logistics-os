@@ -1,0 +1,22 @@
+{
+  "type": "record",
+  "name": "ShipmentSettled",
+  "namespace": "io.logisticsos.shipment.v1",
+  "fields": [
+    { "name": "shipmentId", "type": "string" },
+    { "name": "settlementId", "type": "string" },
+    { "name": "invoiceRef", "type": "string" },
+    { "name": "carrier", "type": "io.logisticsos.types.CarrierRef" },
+    { "name": "agreedCharge", "type": "io.logisticsos.types.Money" },
+    { "name": "settledAt", "type": {"type":"long","logicalType":"timestamp-millis"} },
+    { "name": "status", "type": "io.logisticsos.shipment.ShipmentStatus" },
+    { "name": ["null",{"type":"array","items":{
+        "type":"record","name":"Charge","fields":[
+          {"name":"chargeType","type":"string"},
+          {"name":"amount","type":"io.logisticsos.types.Money"},
+          {"name":["null","string"],"name":"glAccount","default":null}
+        ]}}], "name": "accessorials", "default": null },
+    { "name": ["null","string"], "name": "glPostingRef", "default": null },
+    { "name": ["null","string"], "name": "payTerms", "default": null }
+  ]
+}

@@ -1,0 +1,29 @@
+# Phase-1 topic catalog for local development.
+# Format: <topic>:<partitions>:<cleanup>  (cleanup: delete | compact)
+#
+# obs ingest
+obs.telemetry.v1:3:delete
+obs.scan.v1:3:delete
+obs.carrier-status.v1:3:delete
+
+# legacy vendor feeds (JSON) consumed by the ACLs
+legacy.tms.events.v1:3:delete
+legacy.wms.events.v1:3:delete
+
+# canonical domain events (multi-type)
+tms.shipment.events.v1:6:delete
+wms.task.events.v1:6:delete
+wms.inventory.events.v1:6:delete
+
+# compacted state topics (CQRS read models)
+shipment.state.v1:1:compact
+inventory.state.v1:1:compact
+
+# golden records (compacted, keyed by entity id)
+mdm.customer.events.v1:1:compact
+mdm.carrier.events.v1:1:compact
+mdm.vehicle.events.v1:1:compact
+mdm.location.events.v1:1:compact
+
+# orchestration commands (idempotent, retained for audit)
+orch.command.v1:3:delete

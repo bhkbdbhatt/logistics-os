@@ -1,0 +1,54 @@
+%% Logistics OS - Intelligence layer pipeline (L4)
+%% Rendering: Mermaid flowchart. See docs/intelligence/README.md
+flowchart LR
+  subgraph Inputs["Inputs"]
+    EV["Domain events\nord/tms/wms/yms/vis/obs/inv"]
+    MDM["MDM golden records"]
+    RM["L2 read models / lakehouse"]
+  end
+
+  subgraph FeatureStore["Feature store (online + offline)"]
+    FS["Feature pipeline\n(batch + streaming)"]
+    FV["Feature vectors\n(point-in-time correct)"]
+  end
+
+  subgraph Models["Models & solvers"]
+    ETA["ETA / delay model\n(quantile GBT)"]
+    ACC["Tender-acceptance model"]
+    PERF["Carrier performance model"]
+    ROUTE["Route optimizer\n(OR-tools/Gurobi + LNS)"]
+    LOAD["Load/consolidation optimizer"]
+    SIM["Network simulator\n(discrete-event + Monte Carlo)"]
+  end
+
+  subgraph Outputs["Advisory outputs"]
+    PRED["intel.prediction.v1"]
+    REC["intel.recommendation.v1"]
+    MOD["intel.model.events.v1"]
+    SIMOUT["intel.simulation.v1"]
+  end
+
+  ORCH["Orchestration (L5)\npolicy decides"]
+
+  EV --> FS
+  RM --> FS
+  MDM --> FS
+  FS --> FV
+  FV --> ETA
+  FV --> ACC
+  FV --> PERF
+  FV --> ROUTE
+  FV --> LOAD
+  FV --> SIM
+  ETA --> PRED
+  ACC --> REC
+  PERF --> REC
+  ROUTE --> REC
+  LOAD --> REC
+  SIM --> SIMOUT
+  ETA --> MOD
+  PRED --> ORCH
+  REC --> ORCH
+  SIMOUT --> ORCH
+  ORCH -. feedback labels .-> FS
+  ORCH -. outcomes .-> FS

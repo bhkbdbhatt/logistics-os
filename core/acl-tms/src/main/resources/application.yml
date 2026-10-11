@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: acl-tms
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    consumer:
+      group-id: acl-tms
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+
+acl:
+  legacy-topic: ${LEGACY_TMS_TOPIC:legacy.tms.events.v1}
+  tenant-header: X-Tenant-Id
+  default-tenant: system
+
+server:
+  port: ${SERVER_PORT:8083}

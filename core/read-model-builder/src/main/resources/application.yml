@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: read-model-builder
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    streams:
+      application-id: read-model-builder
+      replication-factor: 1
+      state-dir: ${STATE_DIR:${java.io.tmpdir}/logistics-os-rmb}
+      default:
+        key.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
+        value.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
+
+rmb:
+  shipment-state-topic: shipment.state.v1
+  inventory-state-topic: inventory.state.v1
+  snapshot-consume-enabled: ${RMB_SNAPSHOT_CONSUME:true}
+
+server:
+  port: ${SERVER_PORT:8085}

@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mdm
+  namespace: logistics-os
+  labels:
+    app.kubernetes.io/name: mdm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: mdm
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: mdm
+    spec:
+      containers:
+        - name: mdm
+          image: ghcr.io/logistics-os/mdm:0.1.0
+          ports:
+            - containerPort: 8086
+          envFrom:
+            - configMapRef:
+                name: logistics-os-env
+          env:
+            - name: SERVER_PORT
+              value: "8086"
+            - name: MDM_SEED_ENABLED
+              value: "true"
+          readinessProbe:
+            tcpSocket:
+              port: 8086
+          resources:
+            requests: {cpu: "100m", memory: "256Mi"}
+            limits: {cpu: "500m", memory: "512Mi"}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mdm
+  namespace: logistics-os
+spec:
+  selector:
+    app.kubernetes.io/name: mdm
+  ports:
+    - port: 8086
+      targetPort: 8086

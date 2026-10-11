@@ -1,0 +1,17 @@
+{
+  "type": "record",
+  "name": "DecisionMade",
+  "namespace": "io.logisticsos.orchestration.v1",
+  "doc": "The auditable outcome. decidedByType distinguishes auto/human/partner.",
+  "fields": [
+    { "name": "decisionId", "type": "string" },
+    { "name": "caseId", "type": "string" },
+    { "name": "chosenOptionId", "type": ["null", "string"], "default": null },
+    { "name": "decidedByType", "type": "io.logisticsos.orchestration.v1.DeciderType" },
+    { "name": "decidedBy", "type": ["null", "string"], "default": null },
+    { "name": "overrodeRecommendation", "type": "boolean" },
+    { "name": "rationale", "type": ["null", "string"], "default": null },
+    { "name": "policyRef", "type": "io.logisticsos.orchestration.v1.PolicyRef" },
+    { "name": "decidedAt", "type": { "type": "long", "logicalType": "timestamp-millis" } }
+  ]
+}

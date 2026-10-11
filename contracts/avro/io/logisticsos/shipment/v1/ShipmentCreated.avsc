@@ -1,0 +1,37 @@
+{
+  "type": "record",
+  "name": "ShipmentCreated",
+  "namespace": "io.logisticsos.shipment.v1",
+  "fields": [
+    { "name": "shipmentId", "type": "string" },
+    { "name": "externalRefs", "type": { "type": "array", "items": "io.logisticsos.types.ExternalRef" } },
+    { "name": "shipper",        "type": "io.logisticsos.types.PartyRef" },
+    { "name": "consignee",      "type": "io.logisticsos.types.PartyRef" },
+    { "name": "pickupLocation", "type": "io.logisticsos.types.LocationRef" },
+    { "name": "deliveryLocation","type": "io.logisticsos.types.LocationRef" },
+    { "name": "pickupWindow",   "type": "io.logisticsos.types.TimeWindow" },
+    { "name": "deliveryWindow", "type": "io.logisticsos.types.TimeWindow" },
+    { "name": "serviceLevel",   "type": "string" },
+    { "name": "mode",           "type": "io.logisticsos.shipment.v1.Mode" },
+    { "name": "totalQuantity",  "type": "io.logisticsos.types.Quantity" },
+    { "name": "totalWeightKg",  "type": "double" },
+    { "name": "status",         "type": "io.logisticsos.shipment.ShipmentStatus" },
+    { "name": ["null","io.logisticsos.types.Money"], "name": "declaredValue", "default": null },
+    { "name": ["null", {"type":"array","items": {
+        "type":"record","name":"Commodity","fields":[
+          {"name":"sku","type":"string"},
+          {"name":"description","type":"string"},
+          {"name":"quantity","type":"io.logisticsos.types.Quantity"},
+          {"name":["null","string"],"name":"hsCode","default":null},
+          {"name":["null","io.logisticsos.types.Money"],"name":"unitValue","default":null}
+        ]}}], "name": "commodities", "default": null },
+    { "name": ["null","string"], "name": "specialInstructions", "default": null },
+    { "name": ["null","io.logisticsos.types.TemperatureRange"], "name": "temperatureRange", "default": null },
+    { "name": ["null", {"type":"record","name":"HazmatInfo","fields":[
+        {"name":"unNumber","type":"string"},{"name":"class","type":"string"},
+        {"name":"packingGroup","type":"string"}]}], "name": "hazmat", "default": null },
+    { "name": ["null","io.logisticsos.types.CarrierRef"], "name": "requestedCarrier", "default": null },
+    { "name": ["null","io.logisticsos.types.Money"], "name": "insurance", "default": null },
+    { "name": ["null","string"], "name": "createdBy", "default": null }
+  ]
+}

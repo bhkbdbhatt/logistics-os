@@ -1,0 +1,6 @@
+{
+  "type": "enum",
+  "name": "TriggerType",
+  "namespace": "io.logisticsos.orchestration.v1",
+  "symbols": ["TIME_SLA", "QUALITY", "CAPACITY", "FINANCIAL", "CUSTOMER", "EXTERNAL", "SYSTEM", "REOPTIMIZATION"]
+}

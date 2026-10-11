@@ -1,0 +1,14 @@
+{
+  "type": "record",
+  "name": "ExceptionCaseClosed",
+  "namespace": "io.logisticsos.orchestration.v1",
+  "fields": [
+    { "name": "caseId", "type": "string" },
+    { "name": "outcome", "type": "io.logisticsos.orchestration.v1.CaseOutcome" },
+    { "name": ["null", "string"], "name": "rootCauseCode", "default": null },
+    { "name": "durationMs", "type": "long" },
+    { "name": "humanTouches", "type": "int" },
+    { "name": ["null", "string"], "name": "closedBy", "default": null },
+    { "name": "closedAt", "type": { "type": "long", "logicalType": "timestamp-millis" } }
+  ]
+}

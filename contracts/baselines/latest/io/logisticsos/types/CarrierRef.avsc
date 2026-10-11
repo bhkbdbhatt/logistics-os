@@ -1,0 +1,10 @@
+{
+  "type": "record",
+  "name": "CarrierRef",
+  "namespace": "io.logisticsos.types",
+  "fields": [
+    { "name": "carrierId", "type": "string" },
+    { "name": ["null","string"], "name": "scac", "default": null },
+    { "name": ["null","string"], "name": "name", "default": null }
+  ]
+}

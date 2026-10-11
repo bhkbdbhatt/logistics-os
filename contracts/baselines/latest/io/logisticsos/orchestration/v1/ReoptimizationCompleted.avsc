@@ -1,0 +1,14 @@
+{
+  "type": "record",
+  "name": "ReoptimizationCompleted",
+  "namespace": "io.logisticsos.orchestration.v1",
+  "fields": [
+    { "name": "reoptimizationId", "type": "string" },
+    { "name": "planId", "type": ["null", "string"], "default": null },
+    { "name": "solverId", "type": "string" },
+    { "name": "improvementPct", "type": ["null", "double"], "default": null },
+    { "name": "recommendationIds", "type": ["null", { "type": "array", "items": "string" }], "default": null },
+    { "name": "solveTimeMs", "type": "long" },
+    { "name": "completedAt", "type": { "type": "long", "logicalType": "timestamp-millis" } }
+  ]
+}

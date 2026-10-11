@@ -1,0 +1,6 @@
+{
+  "type": "enum",
+  "name": "EscalationLevel",
+  "namespace": "io.logisticsos.orchestration.v1",
+  "symbols": ["L1_AUTOMATED", "L2_SUPERVISOR", "L3_CONTROL_TOWER", "L4_PARTNER_CUSTOMER", "L5_EXECUTIVE"]
+}

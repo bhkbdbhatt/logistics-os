@@ -1,0 +1,6 @@
+{
+  "type": "enum",
+  "name": "ReoptObjective",
+  "namespace": "io.logisticsos.orchestration.v1",
+  "symbols": ["MIN_COST", "MIN_TIME", "MAX_SERVICE", "BALANCE_COST_SERVICE", "MIN_EMISSIONS"]
+}

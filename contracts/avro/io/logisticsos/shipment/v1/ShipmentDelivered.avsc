@@ -1,0 +1,22 @@
+{
+  "type": "record",
+  "name": "ShipmentDelivered",
+  "namespace": "io.logisticsos.shipment.v1",
+  "fields": [
+    { "name": "shipmentId", "type": "string" },
+    { "name": "deliveredAt", "type": {"type":"long","logicalType":"timestamp-millis"} },
+    { "name": "deliveredLocation", "type": "io.logisticsos.types.LocationRef" },
+    { "name": "receivedBy", "type": "string" },
+    { "name": "podType", "type": { "type": "enum", "name": "PODType",
+        "symbols": ["SIGNATURE","PHOTO","SIGNATURE_PHOTO","ELECTRONIC","TOUCHLESS","NONE"] } },
+    { "name": "quantity", "type": "io.logisticsos.types.Quantity" },
+    { "name": "status", "type": "io.logisticsos.shipment.ShipmentStatus" },
+    { "name": ["null","string"], "name": "signatureRef", "default": null },
+    { "name": ["null",{"type":"array","items":"string"}], "name": "photoRefs", "default": null },
+    { "name": ["null","string"], "name": "condition", "default": null },
+    { "name": ["null","io.logisticsos.types.GeoPoint"], "name": "geo", "default": null },
+    { "name": ["null","string"], "name": "note", "default": null },
+    { "name": ["null","double"], "name": "temperatureC", "default": null },
+    { "name": ["null","string"], "name": "discrepancy", "default": null }
+  ]
+}

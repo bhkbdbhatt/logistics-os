@@ -1,0 +1,28 @@
+{
+  "type": "record",
+  "name": "Location",
+  "namespace": "io.logisticsos.mdm.record.v1",
+  "fields": [
+    { "name": "locationId", "type": "string" },
+    { "name": "tenantId", "type": "string" },
+    { "name": "name", "type": "string" },
+    { "name": "type", "type": {"type":"enum","name":"LocationType",
+        "symbols":["WAREHOUSE","DC","DOCK","STORE","PORT","CUSTOMER_SITE","TERMINAL","RAIL_YARD"]} },
+    { "name": "address", "type": "io.logisticsos.types.Address" },
+    { "name": "timezone", "type": "string" },
+    { "name": "status", "type": {"type":"enum","name":"LocationStatus",
+        "symbols":["ACTIVE","INACTIVE","SEASONAL"]} },
+    { "name": ["null",{"type":"array","items":{
+        "type":"record","name":"HoursOfOperation","fields":[
+          {"name":"dayOfWeek","type":"int"},
+          {"name":"openMinuteOfDay","type":"int"},
+          {"name":"closeMinuteOfDay","type":"int"}]}}],
+      "name": "operatingHours", "default": null },
+    { "name": ["null","int"], "name": "dockCount", "default": null },
+    { "name": ["null","boolean"], "name": "appointmentRequired", "default": null },
+    { "name": ["null",{"type":"array","items":"string"}], "name": "capabilities", "default": null },
+    { "name": ["null","io.logisticsos.types.Contact"], "name": "contact", "default": null },
+    { "name": ["null","string"], "name": "parentLocationId", "default": null },
+    { "name": ["null","int"], "name": "geoFenceRadiusM", "default": null }
+  ]
+}

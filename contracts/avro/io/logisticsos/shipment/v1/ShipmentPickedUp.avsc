@@ -1,0 +1,19 @@
+{
+  "type": "record",
+  "name": "ShipmentPickedUp",
+  "namespace": "io.logisticsos.shipment.v1",
+  "fields": [
+    { "name": "shipmentId", "type": "string" },
+    { "name": "pickedUpAt", "type": {"type":"long","logicalType":"timestamp-millis"} },
+    { "name": "location", "type": "io.logisticsos.types.LocationRef" },
+    { "name": "quantity", "type": "io.logisticsos.types.Quantity" },
+    { "name": "weightKg", "type": "double" },
+    { "name": "status", "type": "io.logisticsos.shipment.ShipmentStatus" },
+    { "name": ["null","int"], "name": "piecesScanned", "default": null },
+    { "name": ["null","string"], "name": "condition", "default": null },
+    { "name": ["null","string"], "name": "signatureRef", "default": null },
+    { "name": ["null","double"], "name": "temperatureC", "default": null },
+    { "name": ["null","string"], "name": "sealNumber", "default": null },
+    { "name": ["null","string"], "name": "discrepancy", "default": null }
+  ]
+}

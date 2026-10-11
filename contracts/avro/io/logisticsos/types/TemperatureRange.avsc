@@ -1,0 +1,10 @@
+{
+  "type": "record",
+  "name": "TemperatureRange",
+  "namespace": "io.logisticsos.types",
+  "doc": "Shared across shipment-events.md and mdm.vehicle (namespace aligned per reference-data.md note).",
+  "fields": [
+    { "name": "minC", "type": "double" },
+    { "name": "maxC", "type": "double" }
+  ]
+}

@@ -1,0 +1,6 @@
+{
+  "type": "enum",
+  "name": "AutonomyTier",
+  "namespace": "io.logisticsos.orchestration.v1",
+  "symbols": ["L0_FULL_AUTO", "L1_AUTO_NOTIFY", "L2_HUMAN_APPROVE", "L3_HUMAN_ONLY"]
+}

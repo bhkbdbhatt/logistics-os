@@ -1,0 +1,34 @@
+%% Logistics OS - 3-phase implementation roadmap (Gantt)
+%% Rendering: Mermaid gantt. See docs/roadmap.md
+gantt
+    title Logistics OS Implementation Roadmap (3 phases)
+    dateFormat YYYY-MM-DD
+    axisFormat %b %Y
+
+    section Phase 1 - Foundation
+    Kafka backbone + Schema Registry        :p1a, 2026-01-01, 90d
+    TMS/WMS anti-corruption adapters        :p1b, 2026-01-15, 120d
+    Canonical model + read models           :p1c, 2026-02-01, 120d
+    IAM / gateway / observability           :p1d, 2026-02-01, 90d
+    Control-tower MVP (read-only)           :p1e, 2026-03-01, 90d
+    Exit review                             :milestone, m1, 2026-06-30, 0d
+
+    section Phase 2 - Orchestration & Intelligence
+    Workflow engine + sagas                 :p2a, 2026-06-01, 150d
+    ATP / promise engine                    :p2b, 2026-07-01, 120d
+    OMS + carrier integrations              :p2c, 2026-07-01, 180d
+    Exception cascade + policy routing      :p2d, 2026-09-01, 150d
+    Predictive ETA v1 + feature store       :p2e, 2026-09-01, 150d
+    Analytics tiers T0-T3 + semantic layer  :p2f, 2026-08-01, 210d
+    Cost attribution + scorecards v1        :p2g, 2026-11-01, 150d
+    Control tower v2 (one-click actions)    :p2h, 2026-11-01, 120d
+    Exit review                             :milestone, m2, 2027-12-01, 0d
+
+    section Phase 3 - Moat & Scale
+    Optimization services (route/load)      :p3a, 2027-09-01, 210d
+    Carrier selection/allocation            :p3b, 2027-11-01, 180d
+    Digital-twin simulation                 :p3c, 2028-01-01, 210d
+    ML platform (registry/drift/retrain)    :p3d, 2027-10-01, 180d
+    Multi-tenant 4PL + partner portal       :p3e, 2028-01-01, 240d
+    FinOps + multi-region HA/DR             :p3f, 2028-03-01, 180d
+    Exit review                             :milestone, m3, 2028-12-31, 0d

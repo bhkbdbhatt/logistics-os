@@ -1,0 +1,16 @@
+{
+  "type": "record",
+  "name": "ShipmentOutForDelivery",
+  "namespace": "io.logisticsos.shipment.v1",
+  "fields": [
+    { "name": "shipmentId", "type": "string" },
+    { "name": "outForDeliveryAt", "type": {"type":"long","logicalType":"timestamp-millis"} },
+    { "name": "vehicle", "type": "io.logisticsos.types.VehicleRef" },
+    { "name": "stopSequence", "type": "int" },
+    { "name": "estimatedDelivery", "type": {"type":"long","logicalType":"timestamp-millis"} },
+    { "name": "status", "type": "io.logisticsos.shipment.ShipmentStatus" },
+    { "name": ["null","io.logisticsos.types.DriverRef"], "name": "driver", "default": null },
+    { "name": ["null","io.logisticsos.types.TimeWindow"], "name": "deliveryWindow", "default": null },
+    { "name": ["null","string"], "name": "routePlanId", "default": null }
+  ]
+}

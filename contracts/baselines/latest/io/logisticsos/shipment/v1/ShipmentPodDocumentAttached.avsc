@@ -1,0 +1,15 @@
+{
+  "type": "record",
+  "name": "ShipmentPodDocumentAttached",
+  "namespace": "io.logisticsos.shipment.v1",
+  "fields": [
+    { "name": "shipmentId", "type": "string" },
+    { "name": "documentId", "type": "string" },
+    { "name": "documentType", "type": {"type":"enum","name":"PodDocumentType",
+        "symbols":["POD","SIGNATURE","PHOTO","CUSTOMS","WEIGHT_TICKET"]} },
+    { "name": "uri", "type": "string" },
+    { "name": "status", "type": "io.logisticsos.shipment.ShipmentStatus" },
+    { "name": ["null",{"type":"long","logicalType":"timestamp-millis"}], "name": "capturedAt", "default": null },
+    { "name": ["null","string"], "name": "sha256", "default": null }
+  ]
+}

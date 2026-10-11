@@ -1,0 +1,48 @@
+{
+  "$comment": "Authoritative eventType -> payload schema mapping for io.logisticsos.events.EventEnvelope.payload (bytes). Every envelope payload MUST have an entry here. schemaSubject uses record-name strategy: <payloadSchema>-value on the schema registry.",
+  "version": 1,
+  "subjectStrategy": "record-name",
+  "compatibilityLevel": "BACKWARD",
+  "entries": [
+    { "eventType": "io.logisticsos.shipment.v1.ShipmentCreated", "payloadSchema": "io.logisticsos.shipment.v1.ShipmentCreated", "kind": "event", "status": "canonical", "sourceManager": "ingest-gateway", "version": 1 },
+    { "eventType": "io.logisticsos.shipment.v1.ShipmentPlanned", "payloadSchema": "io.logisticsos.shipment.v1.ShipmentPlanned", "kind": "event", "status": "canonical", "sourceManager": "orchestrator", "version": 1 },
+    { "eventType": "io.logisticsos.shipment.v1.ShipmentTendered", "payloadSchema": "io.logisticsos.shipment.v1.ShipmentTendered", "kind": "event", "status": "canonical", "sourceManager": "orchestrator", "version": 1 },
+    { "eventType": "io.logisticsos.shipment.v1.ShipmentTenderAccepted", "payloadSchema": "io.logisticsos.shipment.v1.ShipmentTenderAccepted", "kind": "event", "status": "canonical", "sourceManager": "orchestrator", "version": 1 },
+    { "eventType": "io.logisticsos.shipment.v1.ShipmentTenderDeclined", "payloadSchema": "io.logisticsos.shipment.v1.ShipmentTenderDeclined", "kind": "event", "status": "canonical", "sourceManager": "orchestrator", "version": 1 },
+    { "eventType": "io.logisticsos.shipment.v1.ShipmentDispatched", "payloadSchema": "io.logisticsos.shipment.v1.ShipmentDispatched", "kind": "event", "status": "canonical", "sourceManager": "orchestrator", "version": 1 },
+    { "eventType": "io.logisticsos.shipment.v1.ShipmentPickedUp", "payloadSchema": "io.logisticsos.shipment.v1.ShipmentPickedUp", "kind": "event", "status": "canonical", "sourceManager": "ingest-gateway", "version": 1 },
+    { "eventType": "io.logisticsos.shipment.v1.ShipmentArrivedAtFacility", "payloadSchema": "io.logisticsos.shipment.v1.ShipmentFacilityEvent", "kind": "event", "status": "canonical", "sourceManager": "ingest-gateway", "version": 1 },
+    { "eventType": "io.logisticsos.shipment.v1.ShipmentDepartedFacility", "payloadSchema": "io.logisticsos.shipment.v1.ShipmentFacilityEvent", "kind": "event", "status": "canonical", "sourceManager": "ingest-gateway", "version": 1 },
+    { "eventType": "io.logisticsos.shipment.v1.ShipmentOutForDelivery", "payloadSchema": "io.logisticsos.shipment.v1.ShipmentOutForDelivery", "kind": "event", "status": "canonical", "sourceManager": "ingest-gateway", "version": 1 },
+    { "eventType": "io.logisticsos.shipment.v1.ShipmentDelivered", "payloadSchema": "io.logisticsos.shipment.v1.ShipmentDelivered", "kind": "event", "status": "canonical", "sourceManager": "ingest-gateway", "version": 1 },
+    { "eventType": "io.logisticsos.shipment.v1.ShipmentPodDocumentAttached", "payloadSchema": "io.logisticsos.shipment.v1.ShipmentPodDocumentAttached", "kind": "event", "status": "canonical", "sourceManager": "ingest-gateway", "version": 1 },
+    { "eventType": "io.logisticsos.shipment.v1.ShipmentExceptionRaised", "payloadSchema": "io.logisticsos.shipment.v1.ShipmentException", "kind": "event", "status": "canonical", "sourceManager": "ingest-gateway", "version": 1 },
+    { "eventType": "io.logisticsos.shipment.v1.ShipmentExceptionResolved", "payloadSchema": "io.logisticsos.shipment.v1.ShipmentException", "kind": "event", "status": "canonical", "sourceManager": "ingest-gateway", "version": 1 },
+    { "eventType": "io.logisticsos.shipment.v1.ShipmentCancelled", "payloadSchema": "io.logisticsos.shipment.v1.ShipmentCancelled", "kind": "event", "status": "canonical", "sourceManager": "ingest-gateway", "version": 1 },
+    { "eventType": "io.logisticsos.shipment.v1.ShipmentReturned", "payloadSchema": "io.logisticsos.shipment.v1.ShipmentReturned", "kind": "event", "status": "canonical", "sourceManager": "ingest-gateway", "version": 1 },
+    { "eventType": "io.logisticsos.shipment.v1.ShipmentSettled", "payloadSchema": "io.logisticsos.shipment.v1.ShipmentSettled", "kind": "event", "status": "canonical", "sourceManager": "core-settlement", "version": 1 },
+
+    { "eventType": "io.logisticsos.mdm.v1.ReferenceUpserted", "payloadSchema": "io.logisticsos.mdm.v1.ReferenceUpserted", "kind": "event", "status": "canonical", "sourceManager": "mdm", "version": 1 },
+
+    { "eventType": "io.logisticsos.wms.v1.WmsTaskEvent", "payloadSchema": "io.logisticsos.wms.v1.WmsTaskEvent", "kind": "event", "status": "scaffold", "sourceManager": "acl-wms", "version": 1 },
+    { "eventType": "io.logisticsos.wms.v1.InventoryMove", "payloadSchema": "io.logisticsos.wms.v1.InventoryMove", "kind": "event", "status": "scaffold", "sourceManager": "acl-wms", "version": 1 },
+
+    { "eventType": "io.logisticsos.orchestration.v1.TriggerEvaluated", "payloadSchema": "io.logisticsos.orchestration.v1.TriggerEvaluated", "kind": "event", "status": "draft", "sourceManager": "orchestrator", "version": 1 },
+    { "eventType": "io.logisticsos.orchestration.v1.ExceptionCaseOpened", "payloadSchema": "io.logisticsos.orchestration.v1.ExceptionCaseOpened", "kind": "event", "status": "draft", "sourceManager": "orchestrator", "version": 1 },
+    { "eventType": "io.logisticsos.orchestration.v1.ExceptionCaseStateChanged", "payloadSchema": "io.logisticsos.orchestration.v1.ExceptionCaseStateChanged", "kind": "event", "status": "draft", "sourceManager": "orchestrator", "version": 1 },
+    { "eventType": "io.logisticsos.orchestration.v1.ExceptionCaseClosed", "payloadSchema": "io.logisticsos.orchestration.v1.ExceptionCaseClosed", "kind": "event", "status": "draft", "sourceManager": "orchestrator", "version": 1 },
+    { "eventType": "io.logisticsos.orchestration.v1.DecisionRequested", "payloadSchema": "io.logisticsos.orchestration.v1.DecisionRequested", "kind": "event", "status": "draft", "sourceManager": "orchestrator", "version": 1 },
+    { "eventType": "io.logisticsos.orchestration.v1.DecisionMade", "payloadSchema": "io.logisticsos.orchestration.v1.DecisionMade", "kind": "event", "status": "draft", "sourceManager": "orchestrator", "version": 1 },
+    { "eventType": "io.logisticsos.orchestration.v1.DecisionDeferred", "payloadSchema": "io.logisticsos.orchestration.v1.DecisionDeferred", "kind": "event", "status": "draft", "sourceManager": "orchestrator", "version": 1 },
+    { "eventType": "io.logisticsos.orchestration.v1.EscalationRaised", "payloadSchema": "io.logisticsos.orchestration.v1.EscalationRaised", "kind": "event", "status": "draft", "sourceManager": "orchestrator", "version": 1 },
+    { "eventType": "io.logisticsos.orchestration.v1.EscalationResolved", "payloadSchema": "io.logisticsos.orchestration.v1.EscalationResolved", "kind": "event", "status": "draft", "sourceManager": "orchestrator", "version": 1 },
+    { "eventType": "io.logisticsos.orchestration.v1.ReoptimizationRequested", "payloadSchema": "io.logisticsos.orchestration.v1.ReoptimizationRequested", "kind": "event", "status": "draft", "sourceManager": "orchestrator", "version": 1 },
+    { "eventType": "io.logisticsos.orchestration.v1.ReoptimizationCompleted", "payloadSchema": "io.logisticsos.orchestration.v1.ReoptimizationCompleted", "kind": "event", "status": "draft", "sourceManager": "orchestrator", "version": 1 },
+
+    { "eventType": "io.logisticsos.orchestration.v1.OrchestrationCommand", "payloadSchema": "io.logisticsos.orchestration.v1.OrchestrationCommand", "kind": "command", "status": "draft", "sourceManager": "orchestrator", "version": 1 },
+
+    { "eventType": "io.logisticsos.obs.v1.Telemetry", "payloadSchema": "io.logisticsos.obs.v1.Telemetry", "kind": "observation", "status": "scaffold", "sourceManager": "obs-edge", "version": 1 },
+    { "eventType": "io.logisticsos.obs.v1.Scan", "payloadSchema": "io.logisticsos.obs.v1.Scan", "kind": "observation", "status": "scaffold", "sourceManager": "obs-edge", "version": 1 },
+    { "eventType": "io.logisticsos.obs.v1.CarrierStatus", "payloadSchema": "io.logisticsos.obs.v1.CarrierStatus", "kind": "observation", "status": "scaffold", "sourceManager": "obs-edge", "version": 1 }
+  ]
+}

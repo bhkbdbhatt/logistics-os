@@ -1,0 +1,40 @@
+%% Logistics OS - Exception Case statechart (hierarchical)
+%% Rendering: Mermaid stateDiagram-v2. See docs/orchestration/workflow-engine.md
+stateDiagram-v2
+    [*] --> DETECTED: TriggerEvaluated (matched)
+    DETECTED --> TRIAGING: dedupe/merge case, assemble context
+    TRIAGING --> DECIDING: DecisionContext built
+    DECIDING --> AUTO_EXECUTING: policy=automated (L0/L1)
+    DECIDING --> AWAITING_HUMAN: policy=human-approve (L2/L3)
+    DECIDING --> AWAITING_PARTNER: partner ack required
+    AWAITING_HUMAN --> EXECUTING: human approves
+    AWAITING_HUMAN --> CANCELLED: human rejects / dismisses
+    AWAITING_PARTNER --> EXECUTING: partner acks
+    AWAITING_PARTNER --> RECONCILING: partner declines / timeout
+    AUTO_EXECUTING --> EXECUTING: commands dispatched
+    EXECUTING --> VERIFYING: outcomes observed
+    VERIFYING --> RESOLVED: expected outcome met
+    VERIFYING --> RECONCILING: outcome off-target
+    RECONCILING --> EXECUTING: replan / alternative
+    RECONCILING --> ESCALATED: options exhausted
+    RECONCILING --> FAILED: unrecoverable
+    ESCALATED --> DECIDING: human reassigns
+    ESCALATED --> RESOLVED: manual fix
+    RESOLVED --> CLOSED: audit + notify
+    FAILED --> CLOSED: manual follow-up
+    CANCELLED --> CLOSED
+    CLOSED --> [*]
+
+    state DECIDING {
+        [*] --> EvaluatePolicy
+        EvaluatePolicy --> RankedOptions
+        RankedOptions --> [*]
+    }
+    state VERIFYING {
+        [*] --> Observe
+        Observe --> [*]
+    }
+    note right of DECIDING
+      SLA timer per state
+      Escalation if timer fires
+    end note

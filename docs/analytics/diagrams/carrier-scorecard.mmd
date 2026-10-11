@@ -1,0 +1,48 @@
+%% Logistics OS - Carrier scorecard computation (sources -> dimensions -> composite)
+%% Rendering: Mermaid flowchart. See docs/analytics/carrier-scorecards.md
+flowchart LR
+  subgraph Sources["Data sources"]
+    D1["tms.tender.events"]
+    D2["tms.shipment / vis.milestone"]
+    D3["fin.bill / fin.charge"]
+    D4["claims system"]
+    D5["mdm.carrier / compliance"]
+    D6["integration logs"]
+  end
+
+  subgraph Dim["Dimensions (raw)"]
+    X1["Cost / accessorials / disputes"]
+    X2["OTD / OTP / transit variance"]
+    X3["Tender acceptance / capacity"]
+    X4["Damage & claims"]
+    X5["Compliance & safety"]
+    X6["Integration quality"]
+  end
+
+  NORM["Normalize 0-100\n(cohort: lane/mode/service)"]
+  SHRINK["Empirical-Bayes shrinkage\n(small-sample protection)"]
+  WEIGH["Weight by profile\n+ context + data-quality + recency"]
+  COMP["Composite score -> grade A/B/C/D"]
+
+  L4["L4 carrier selection"]
+  PROC["Procurement / allocation"]
+  CT["Control tower risk"]
+  ALERT["analytics.scorecard.v1\n+ grade-change alert"]
+
+  D1 --> X3
+  D2 --> X2
+  D3 --> X1
+  D4 --> X4
+  D5 --> X5
+  D6 --> X6
+  X1 --> NORM
+  X2 --> NORM
+  X3 --> NORM
+  X4 --> NORM
+  X5 --> NORM
+  X6 --> NORM
+  NORM --> SHRINK --> WEIGH --> COMP
+  COMP --> ALERT
+  COMP --> L4
+  COMP --> PROC
+  COMP --> CT

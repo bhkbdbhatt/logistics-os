@@ -1,0 +1,9 @@
+{
+  "type": "record",
+  "name": "TimeWindow",
+  "namespace": "io.logisticsos.types",
+  "fields": [
+    { "name": "start", "type": { "type": "long", "logicalType": "timestamp-millis" } },
+    { "name": "end",   "type": { "type": "long", "logicalType": "timestamp-millis" } }
+  ]
+}

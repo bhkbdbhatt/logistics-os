@@ -1,0 +1,46 @@
+%% Logistics OS - Timed late-inbound exception cascade (mirrors exception-flow.md)
+%% Rendering: Mermaid sequenceDiagram
+sequenceDiagram
+  autonumber
+  participant WX as Weather feed (L1)
+  participant VIS as Visibility (L3)
+  participant INT as Intelligence (L4)
+  participant TE as Trigger Evaluator (L5)
+  participant CC as Cascade Orchestrator
+  participant CA as Context Assembler
+  participant PO as Policy Engine
+  participant AE as Action Executor
+  participant ES as Escalation Mgr
+  participant WMS as WMS (labor)
+  participant TMS as TMS (carrier)
+  participant NOT as Notify (customer)
+
+  WX->>VIS: severe weather on inbound lane
+  VIS->>INT: milestone: inbound at risk
+  INT->>TE: intel.prediction.v1 (ETA +95m, conf 0.86)
+  Note over TE: T+00:05 trigger eval
+  TE->>CC: orch.trigger.v1 (LATE_INBOUND, HIGH)
+  CC->>CA: assemble decision context
+  CA-->>CC: context (facts, signals, options)
+  Note over CC: T+00:15
+  CC->>PO: evaluate policy (autonomy)
+  PO-->>CC: labor=AUTO(L1), carrier=AWAITING_HUMAN(L2), notify=AUTO(L0)
+  par automated branch
+    CC->>AE: ReallocateLabor
+    AE->>WMS: orch.command.v1
+    WMS-->>AE: wms.task.events.v1 (ok)
+  and notification branch
+    CC->>AE: NotifyCustomer (proactive ETA)
+    AE->>NOT: orch.command.v1
+  and human branch
+    CC->>ES: carrier rebook human task (SLA 15m)
+    ES->>ES: orch.escalation.v1 if no ack
+  end
+  Note over CC: T+02:00 auto branches done
+  ES-->>CC: human approved re-tender (T+12:00)
+  CC->>AE: RebookCarrier
+  AE->>TMS: orch.command.v1 (re-tender)
+  TMS-->>CC: tms.tender.events.v1 (accepted)
+  CC->>CC: VERIFYING -> RESOLVED
+  CC->>NOT: final confirmation
+  Note over CC: T+18:30 case CLOSED

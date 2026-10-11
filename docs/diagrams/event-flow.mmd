@@ -1,0 +1,39 @@
+%% Logistics OS - Order-to-Cash event flow (choreography)
+%% Rendering: Mermaid sequenceDiagram. See docs/events.md for topics.
+sequenceDiagram
+  autonumber
+  participant CH as Channel/EDI
+  participant OMS as OMS
+  participant ORCH as Orchestrator
+  participant ATP as ATP/Promise
+  participant INTEL as Intelligence
+  participant INV as Inventory view
+  participant TMS as TMS
+  participant WMS as WMS
+  participant YMS as YMS
+  participant VIS as Visibility
+  participant FIN as Billing
+  participant BUS as Kafka Backbone
+
+  CH->>OMS: SubmitOrder
+  OMS->>BUS: ord.order.created.v1
+  BUS->>ORCH: order.created
+  ORCH->>ATP: ReserveAtp(order)
+  ATP->>INV: query availability
+  ATP->>INTEL: GetEta / GetPlacement
+  ATP-->>ORCH: Promise(date, node)
+  ORCH->>BUS: orch.promise.v1
+  ORCH->>OMS: ConfirmOrder
+  OMS->>BUS: ord.order.confirmed.v1
+  ORCH->>WMS: Allocate/Pick command
+  WMS->>BUS: wms.task.events.v1
+  ORCH->>TMS: TenderShipment command
+  TMS->>BUS: tms.tender.events.v1
+  TMS->>BUS: tms.shipment.events.v1
+  BUS->>YMS: shipment.departed (schedule dock)
+  YMS->>BUS: yms.yard.events.v1
+  VIS->>BUS: vis.milestone.events.v1
+  TMS->>BUS: tms.shipment.delivered
+  BUS->>FIN: shipment.delivered (accrue/charge)
+  FIN->>BUS: fin.settlement.events.v1
+  Note over ORCH: Exceptions always emitted on orch.exception.v1

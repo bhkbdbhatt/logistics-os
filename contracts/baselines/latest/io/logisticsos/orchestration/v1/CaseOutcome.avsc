@@ -1,0 +1,6 @@
+{
+  "type": "enum",
+  "name": "CaseOutcome",
+  "namespace": "io.logisticsos.orchestration.v1",
+  "symbols": ["RESOLVED_AUTO", "RESOLVED_HUMAN", "RESOLVED_PARTNER", "FAILED", "CANCELLED", "DUPLICATE_MERGED"]
+}

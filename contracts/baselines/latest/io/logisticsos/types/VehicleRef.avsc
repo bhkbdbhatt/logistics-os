@@ -1,0 +1,10 @@
+{
+  "type": "record",
+  "name": "VehicleRef",
+  "namespace": "io.logisticsos.types",
+  "fields": [
+    { "name": "vehicleId", "type": "string" },
+    { "name": ["null","string"], "name": "type", "default": null, "doc": "TRUCK|VAN|TRAILER|CONTAINER|BIKE|VESSEL|RAIL" },
+    { "name": ["null","string"], "name": "licensePlate", "default": null }
+  ]
+}

@@ -1,0 +1,6 @@
+{
+  "type": "enum",
+  "name": "ReoptScope",
+  "namespace": "io.logisticsos.orchestration.v1",
+  "symbols": ["SINGLE_SHIPMENT", "LOAD", "WAVE", "NODE", "LANE", "NETWORK"]
+}

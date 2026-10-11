@@ -1,0 +1,51 @@
+%% Logistics OS - Analytics pipeline: event stream -> queryable stores (tiered)
+%% Rendering: Mermaid flowchart. See docs/analytics/README.md
+flowchart TB
+  subgraph BUS["L2 Backbone (Kafka)"]
+    EV["domain events\nord/tms/wms/yms/vis/inv/fin/obs\n+ intel.* + orch.*"]
+  end
+
+  subgraph T0["T0 Real-time (p99 < 2 s)"]
+    FLINK["Flink / Kafka Streams\nstateful, windowed"]
+    HOT["Hot store\nRedis / Aerospike\nlatest state + leaderboards"]
+    RULES["Control-tower rule engine"]
+  end
+
+  subgraph T1["T1 Near-real-time (p99 < 30 s)"]
+    OLAP["OLAP\nClickHouse / Druid / Pinot\npre-aggregations"]
+  end
+
+  subgraph T2["T2 Micro-batch (1-15 min)"]
+    MB["Flink/Spark micro-batch\nnear-RT marts"]
+  end
+
+  subgraph T3["T3 Batch (nightly / hourly)"]
+    LAKE["Lakehouse (Iceberg/Delta)\nbronze -> silver -> gold (dbt)"]
+    SEM["Semantic layer\nmetrics store"]
+  end
+
+  subgraph T4["T4 Simulation (on-demand)"]
+    SIM["Digital twin (L4)\nscenario -> results"]
+  end
+
+  subgraph CONSUME["Consumers"]
+    CT["Control tower\nWS/SSE + charts"]
+    ALERTS["analytics.alert.v1"]
+    BI["BI / metrics API"]
+    ML["ML / feature store"]
+    PLAN["Planning / procurement"]
+  end
+
+  EV --> FLINK
+  EV --> OLAP
+  EV --> MB
+  EV --> LAKE
+  FLINK --> HOT --> CT
+  FLINK --> RULES --> ALERTS --> CT
+  OLAP --> CT
+  MB --> OLAP
+  LAKE --> SEM --> BI
+  LAKE --> ML
+  MB --> PLAN
+  LAKE --> SIM --> PLAN
+  RULES --> CT

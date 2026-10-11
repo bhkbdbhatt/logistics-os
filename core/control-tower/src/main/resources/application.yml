@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: control-tower
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+
+tower:
+  shipment-state-topic: shipment.state.v1
+  inventory-state-topic: inventory.state.v1
+  command-topic: orch.command.v1
+  snapshot-consume-enabled: ${TOWER_SNAPSHOT_CONSUME:true}
+  sla-at-risk-millis: ${TOWER_SLA_AT_RISK_MILLIS:1800000}
+  default-tenant: ${DEFAULT_TENANT:tenant-1}
+
+server:
+  port: ${SERVER_PORT:8087}

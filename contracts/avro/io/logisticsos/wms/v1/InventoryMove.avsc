@@ -1,0 +1,19 @@
+{
+  "type": "record",
+  "name": "InventoryMove",
+  "namespace": "io.logisticsos.wms.v1",
+  "doc": "Scaffold-level inventory movement (canonicalization pending). Exactly-once effects: consumers insert-or-ignore by idempotencyKey derived from moveSequence. Emitted by acl-wms; consumed by read-model-builder into inventory_view.",
+  "fields": [
+    { "name": "inventoryId", "type": "string", "doc": "partition key" },
+    { "name": "sku", "type": "string" },
+    { "name": "moveType", "type": { "type": "enum", "name": "MoveType",
+        "symbols": ["RECEIPT", "PUTAWAY", "TRANSFER", "PICK", "RETURN", "ADJUST"] } },
+    { "name": "moveSequence", "type": "long", "doc": "monotonic per-inventoryId; version guard" },
+    { "name": "fromLocation", "type": ["null", "string"], "default": null },
+    { "name": "toLocation", "type": ["null", "string"], "default": null },
+    { "name": "quantity", "type": "io.logisticsos.types.Quantity" },
+    { "name": "reasonCode", "type": ["null", "string"], "default": null },
+    { "name": "referenceRef", "type": ["null", "string"], "default": null },
+    { "name": "occurredAt", "type": {"type":"long","logicalType":"timestamp-millis"} }
+  ]
+}

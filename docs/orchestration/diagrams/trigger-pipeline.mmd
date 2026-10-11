@@ -1,0 +1,49 @@
+%% Logistics OS - Trigger -> Cascade -> Decision -> Action pipeline
+%% Rendering: Mermaid flowchart. See docs/orchestration/README.md
+flowchart LR
+  subgraph Sources["Event sources (L1-L4)"]
+    EV["Domain events\nobs/tms/wms/yms/vis"]
+    PRED["intel.prediction.v1"]
+    REC["intel.recommendation.v1"]
+    TIME["Timers / cutoffs / SLA"]
+  end
+
+  subgraph Orchestrator["Orchestrator (L5)"]
+    TE["Trigger Evaluator\n(rules + windows)"]
+    CC["Cascade Orchestrator\n(Temporal workflows)"]
+    CA["Context Assembler\n(read models + signals)"]
+    PO["Policy Engine\n(OPA, autonomy tiers)"]
+    DR["Decision Router\nauto | human | partner"]
+    RE["Re-optimization\nCoordinator (coalesce)"]
+    AE["Action Executor\n(commands)"]
+    ES["Escalation Manager\n(SLA timers, on-call)"]
+    AUD["Decision/Audit Store\n(explainability)"]
+  end
+
+  subgraph Targets["Command targets (L3)"]
+    TMS["TMS"]
+    WMS["WMS"]
+    YMS["YMS"]
+    OMS["OMS"]
+    NT["Notification svc"]
+  end
+
+  EV --> TE
+  PRED --> TE
+  REC --> RE
+  TIME --> TE
+  TE -->|orch.trigger.v1| CC
+  CC --> CA --> PO --> DR
+  DR -->|automated| AE
+  DR -->|human| ES
+  DR -->|partner| AE
+  DR -->|defer/needs| RE
+  RE --> CC
+  AE -->|orch.command.v1| TMS
+  AE --> WMS
+  AE --> YMS
+  AE --> OMS
+  AE --> NT
+  ES -->|orch.escalation.v1| AUD
+  CC --> AUD
+  AE --> AUD

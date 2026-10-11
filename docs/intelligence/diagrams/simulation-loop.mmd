@@ -1,0 +1,33 @@
+%% Logistics OS - Network simulation (digital twin) loop
+%% Rendering: Mermaid flowchart. See docs/intelligence/network-simulation.md
+flowchart LR
+  subgraph Baseline["Baseline"]
+    B1["Network state snapshot\n(nodes, lanes, capacity, cost)"]
+    B2["Historical demand & service"]
+  end
+  subgraph Scenario["Scenario definition"]
+    S1["Levers: capacity, demand,\nlane closure, carrier mix,\ncost, SLA, node open/close"]
+    S2["Objective + horizon + Monte Carlo runs"]
+  end
+  subgraph Engine["Simulation engine"]
+    E1["Discrete-event simulation"]
+    E2["Embedded optimizer\n(routing/allocation)"]
+    E3["Monte Carlo over uncertainty"]
+  end
+  subgraph Results["Results"]
+    R1["Cost / OTD / SLA / utilization / emissions"]
+    R2["Sensitivity & risk bands\n(P10/P90)"]
+  end
+  TWIN["Digital twin calibration"]
+  ORCH["Orchestration / policy tuning"]
+  ANALYTICS["Analytics (L7) decision support"]
+
+  B1 --> Engine
+  B2 --> Engine
+  S1 --> Engine
+  S2 --> Engine
+  E1 --> E2 --> E3 --> R1 --> R2
+  R1 --> ANALYTICS
+  R2 --> ORCH
+  ANALYTICS -. realized vs simulated .-> TWIN
+  TWIN -. recalibrate params .-> E1

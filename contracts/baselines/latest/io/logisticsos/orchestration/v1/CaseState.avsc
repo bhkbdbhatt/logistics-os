@@ -1,0 +1,8 @@
+{
+  "type": "enum",
+  "name": "CaseState",
+  "namespace": "io.logisticsos.orchestration.v1",
+  "symbols": ["DETECTED", "TRIAGING", "DECIDING", "AUTO_EXECUTING", "AWAITING_HUMAN",
+              "AWAITING_PARTNER", "EXECUTING", "VERIFYING", "RECONCILING",
+              "ESCALATED", "RESOLVED", "FAILED", "CANCELLED", "CLOSED"]
+}

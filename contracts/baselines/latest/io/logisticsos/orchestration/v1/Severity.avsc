@@ -1,0 +1,6 @@
+{
+  "type": "enum",
+  "name": "Severity",
+  "namespace": "io.logisticsos.orchestration.v1",
+  "symbols": ["LOW", "MEDIUM", "HIGH", "CRITICAL"]
+}

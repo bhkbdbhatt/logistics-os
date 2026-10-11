@@ -1,0 +1,10 @@
+# SchemaValidator / reconcile.sh exclusion list: top-level records that are
+# intentional, referenced payloads but are NOT envelope payloads themselves
+# (embedded value / sub-records inside a registered payload, or models wrapped
+# as bytes inside a registered payload). One fully-qualified name per line.
+io.logisticsos.orchestration.v1.DecisionContext
+io.logisticsos.orchestration.v1.SubjectRefs
+io.logisticsos.mdm.record.v1.Customer
+io.logisticsos.mdm.record.v1.Carrier
+io.logisticsos.mdm.record.v1.Vehicle
+io.logisticsos.mdm.record.v1.Location

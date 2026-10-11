@@ -1,0 +1,6 @@
+{
+  "type": "enum",
+  "name": "OptionSource",
+  "namespace": "io.logisticsos.orchestration.v1",
+  "symbols": ["AUTO_RECOMMENDER", "PLAYBOOK", "HUMAN", "PARTNER"]
+}

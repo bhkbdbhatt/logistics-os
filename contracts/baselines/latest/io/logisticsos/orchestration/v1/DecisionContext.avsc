@@ -1,0 +1,64 @@
+{
+  "type": "record",
+  "name": "DecisionContext",
+  "namespace": "io.logisticsos.orchestration.v1",
+  "doc": "Everything needed to make or delegate one operational decision.",
+  "fields": [
+    { "name": "decisionId", "type": "string" },
+    { "name": "caseId", "type": "string" },
+    { "name": "decisionType", "type": "io.logisticsos.orchestration.v1.DecisionType" },
+    { "name": "subject", "type": "io.logisticsos.orchestration.v1.SubjectRefs" },
+    { "name": "triggerId", "type": "string" },
+    { "name": "severity", "type": "io.logisticsos.orchestration.v1.Severity" },
+    { "name": "facts", "type": { "type": "array", "items": {
+        "type": "record", "name": "Fact", "fields": [
+          { "name": "key", "type": "string" },
+          { "name": "value", "type": "string" },
+          { "name": ["null", "string"], "name": "source", "default": null },
+          { "name": ["null", "long"], "name": "asOf", "default": null }
+        ] } } },
+    { "name": "signals", "type": { "type": "array", "items": {
+        "type": "record", "name": "Signal", "fields": [
+          { "name": "name", "type": "string" },
+          { "name": "value", "type": "double" },
+          { "name": ["null", "string"], "name": "unit", "default": null },
+          { "name": ["null", "string"], "name": "modelId", "default": null },
+          { "name": ["null", "double"], "name": "confidence", "default": null },
+          { "name": ["null", "string"], "name": "featuresHash", "default": null }
+        ] } } },
+    { "name": "constraints", "type": { "type": "array", "items": {
+        "type": "record", "name": "Constraint", "fields": [
+          { "name": "name", "type": "string" },
+          { "name": "type", "type": { "type": "enum", "name": "ConstraintType",
+            "symbols": ["SLA", "CAPACITY", "COST", "POLICY", "REGULATORY", "TIME", "RESOURCE"] } },
+          { "name": "value", "type": "string" },
+          { "name": "hard", "type": "boolean" }
+        ] } } },
+    { "name": "options", "type": { "type": "array", "items": {
+        "type": "record", "name": "DecisionOption", "fields": [
+          { "name": "optionId", "type": "string" },
+          { "name": "description", "type": "string" },
+          { "name": "expectedOutcome", "type": "string" },
+          { "name": "estimatedCost", "type": ["null", "io.logisticsos.types.Money"], "default": null },
+          { "name": "estimatedTimeMin", "type": ["null", "int"], "default": null },
+          { "name": "riskScore", "type": ["null", "double"], "default": null },
+          { "name": "confidence", "type": ["null", "double"], "default": null },
+          { "name": "source", "type": "io.logisticsos.orchestration.v1.OptionSource" },
+          { "name": "requiresPartnerAck", "type": "boolean" },
+          { "name": "policyAllowed", "type": "boolean" },
+          { "name": "score", "type": ["null", "double"], "default": null }
+        ] } } },
+    { "name": "recommendedOptionId", "type": ["null", "string"], "default": null },
+    { "name": "policyRef", "type": { "type": "record", "name": "PolicyRef", "fields": [
+        { "name": "policyId", "type": "string" },
+        { "name": "version", "type": "int" },
+        { "name": "tenantId", "type": "string" }
+      ] } },
+    { "name": "autonomyTier", "type": "io.logisticsos.orchestration.v1.AutonomyTier" },
+    { "name": "costBudget", "type": ["null", "io.logisticsos.types.Money"], "default": null },
+    { "name": "timeLimitMin", "type": ["null", "int"], "default": null },
+    { "name": "deadline", "type": ["null", { "type": "long", "logicalType": "timestamp-millis" }], "default": null },
+    { "name": "requestedBy", "type": "string", "doc": "trigger|cascade|human:<id>|reopt" },
+    { "name": "requestedAt", "type": { "type": "long", "logicalType": "timestamp-millis" } }
+  ]
+}

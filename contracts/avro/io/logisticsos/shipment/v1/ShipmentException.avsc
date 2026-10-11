@@ -1,0 +1,25 @@
+{
+  "type": "record",
+  "name": "ShipmentException",
+  "namespace": "io.logisticsos.shipment.v1",
+  "doc": "Payload for ShipmentExceptionRaised (raisedAt set) and ShipmentExceptionResolved (resolvedAt set). Resolved by eventType via payload-registry.json.",
+  "fields": [
+    { "name": "shipmentId", "type": "string" },
+    { "name": "exceptionId", "type": "string" },
+    { "name": "type", "type": { "type": "enum", "name": "ExceptionType",
+        "symbols": ["DELAY","DAMAGE","SHORTAGE","OVERAGE","REFUSED","MISSING_DOC",
+                    "TEMPERATURE_BREACH","CUSTOMS_HOLD","ACCIDENT","WEATHER","ADDRESS_ISSUE"] } },
+    { "name": "severity", "type": { "type":"enum","name":"Severity",
+        "symbols":["LOW","MEDIUM","HIGH","CRITICAL"] } },
+    { "name": "status", "type": "io.logisticsos.shipment.ShipmentStatus" },
+    { "name": "raisedAt", "type": ["null",{"type":"long","logicalType":"timestamp-millis"}], "default": null },
+    { "name": "resolvedAt", "type": ["null",{"type":"long","logicalType":"timestamp-millis"}], "default": null },
+    { "name": ["null","string"], "name": "code", "default": null },
+    { "name": ["null","string"], "name": "description", "default": null },
+    { "name": ["null","io.logisticsos.types.LocationRef"], "name": "location", "default": null },
+    { "name": ["null","int"], "name": "legIndex", "default": null },
+    { "name": ["null","string"], "name": "resolutionCode", "default": null },
+    { "name": ["null",{"type":"array","items":"string"}], "name": "actions", "default": null },
+    { "name": ["null","string"], "name": "resolvedBy", "default": null }
+  ]
+}

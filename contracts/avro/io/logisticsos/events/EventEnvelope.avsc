@@ -1,0 +1,26 @@
+{
+  "type": "record",
+  "name": "EventEnvelope",
+  "namespace": "io.logisticsos.events",
+  "doc": "Universal envelope for all canonical events. Enables exactly-once and idempotent processing. 'payload' is the event-specific record (see payload-registry.json).",
+  "fields": [
+    { "name": "eventId",          "type": "string",  "doc": "ULID; globally unique event identity" },
+    { "name": "eventType",        "type": "string",  "doc": "Fully-qualified type, e.g. tms.shipment.picked_up" },
+    { "name": "eventVersion",     "type": "int",     "doc": "Payload schema version (minor/major int)" },
+    { "name": "tenantId",         "type": "string",  "doc": "Owning tenant; mandatory for isolation" },
+    { "name": "aggregateType",    "type": "string",  "doc": "e.g. shipment, trip, load, invoice" },
+    { "name": "aggregateId",      "type": "string",  "doc": "Partition key; the entity id" },
+    { "name": "aggregateVersion", "type": "long",    "doc": "Monotonic per-aggregate sequence; idempotency/ordering guard" },
+    { "name": "partitionSequence","type": "long",    "doc": "Broker offset (populated by relay/pkg); optional at produce time" },
+    { "name": "occurredAt",       "type": { "type": "long", "logicalType": "timestamp-millis" }, "doc": "When the domain fact happened" },
+    { "name": "recordedAt",       "type": { "type": "long", "logicalType": "timestamp-millis" }, "doc": "When the producer persisted it" },
+    { "name": "producer",         "type": "string",  "doc": "service@version, e.g. acl-tms@1.0.0" },
+    { "name": "correlationId",    "type": "string",  "doc": "End-to-end business flow id" },
+    { "name": ["null","string"], "name": "causationId",   "default": null, "doc": "eventId of the immediate cause" },
+    { "name": ["null","string"], "name": "traceparent",   "default": null, "doc": "W3C trace context for distributed tracing" },
+    { "name": "idempotencyKey",   "type": "string",  "doc": "eventType:aggregateId:aggregateVersion (or producer key)" },
+    { "name": "schemaSubject",    "type": "string",  "doc": "Schema Registry subject, e.g. tms.shipment.events.v1-value" },
+    { "name": ["null","string"], "name": "sourceSystem","default": null, "doc": "Origin system (for ACL-mapped events)" },
+    { "name": "payload",          "type": "bytes",   "doc": "Serialized event-specific record (see shipment-events.md)" }
+  ]
+}

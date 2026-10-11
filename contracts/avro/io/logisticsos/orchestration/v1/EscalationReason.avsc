@@ -1,0 +1,7 @@
+{
+  "type": "enum",
+  "name": "EscalationReason",
+  "namespace": "io.logisticsos.orchestration.v1",
+  "symbols": ["SLA_BREACH", "LOW_CONFIDENCE", "COST_THRESHOLD", "REGULATED",
+              "REPEATED_FAILURE", "PARTNER_TIMEOUT", "POLICY_FORBIDDEN", "MANUAL"]
+}

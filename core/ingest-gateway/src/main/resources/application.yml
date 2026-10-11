@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: ingest-gateway
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: io.logisticsos.events.kafka.EventEnvelopeSerializer
+      acks: all
+      enable-idempotence: true
+
+server:
+  port: ${SERVER_PORT:8081}

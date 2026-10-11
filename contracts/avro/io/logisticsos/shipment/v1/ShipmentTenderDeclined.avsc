@@ -1,0 +1,14 @@
+{
+  "type": "record",
+  "name": "ShipmentTenderDeclined",
+  "namespace": "io.logisticsos.shipment.v1",
+  "fields": [
+    { "name": "shipmentId", "type": "string" },
+    { "name": "tenderId", "type": "string" },
+    { "name": "carrier", "type": "io.logisticsos.types.CarrierRef" },
+    { "name": "reasonCode", "type": "string", "doc": "CAPACITY|RATE|SERVICE|EQUIPMENT|OTHER" },
+    { "name": "status", "type": "io.logisticsos.shipment.ShipmentStatus" },
+    { "name": ["null","string"], "name": "reasonText", "default": null },
+    { "name": ["null",{"type":"long","logicalType":"timestamp-millis"}], "name": "declinedAt", "default": null }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "type": "record",
+  "name": "CarrierStatus",
+  "namespace": "io.logisticsos.obs.v1",
+  "doc": "Scaffold-level carrier status payload (canonicalization pending). Normalized from EDI 214 / visibility feeds on obs.carrier-status.v1.",
+  "fields": [
+    { "name": "statusId", "type": "string" },
+    { "name": "carrierId", "type": "string" },
+    { "name": "scac", "type": ["null", "string"], "default": null },
+    { "name": "shipmentId", "type": ["null", "string"], "default": null },
+    { "name": "statusCode", "type": "string" },
+    { "name": "statusDescription", "type": ["null", "string"], "default": null },
+    { "name": "statusTimestamp", "type": { "type": "long", "logicalType": "timestamp-millis" } },
+    { "name": "location", "type": ["null", "io.logisticsos.types.LocationRef"], "default": null },
+    { "name": "trailerId", "type": ["null", "string"], "default": null },
+    { "name": "sealNumber", "type": ["null", "string"], "default": null },
+    { "name": "rawPayloadRef", "type": ["null", "string"], "default": null }
+  ]
+}

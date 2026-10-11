@@ -1,0 +1,23 @@
+{
+  "type": "record",
+  "name": "OrchestrationCommand",
+  "namespace": "io.logisticsos.orchestration.v1",
+  "doc": "commandId is the idempotency key: target services dedupe on it and must tolerate duplicate delivery.",
+  "fields": [
+    { "name": "commandId", "type": "string" },
+    { "name": "commandType", "type": "io.logisticsos.orchestration.v1.CommandType" },
+    { "name": "targetService", "type": "string", "doc": "tms|wms|yms|oms|notification" },
+    { "name": "commandTargetId", "type": "string", "doc": "partition key: aggregate id being acted on" },
+    { "name": "caseId", "type": ["null", "string"], "default": null },
+    { "name": "decisionId", "type": ["null", "string"], "default": null },
+    { "name": "subject", "type": "io.logisticsos.orchestration.v1.SubjectRefs" },
+    { "name": "params", "type": { "type": "array", "items": {
+        "type": "record", "name": "Param", "fields": [
+          { "name": "key", "type": "string" },
+          { "name": "value", "type": "string" }
+        ] } } },
+    { "name": "priority", "type": "io.logisticsos.orchestration.v1.Severity" },
+    { "name": "deadline", "type": ["null", { "type": "long", "logicalType": "timestamp-millis" }], "default": null },
+    { "name": "issuedAt", "type": { "type": "long", "logicalType": "timestamp-millis" } }
+  ]
+}

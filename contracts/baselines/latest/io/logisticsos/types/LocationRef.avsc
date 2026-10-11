@@ -1,0 +1,11 @@
+{
+  "type": "record",
+  "name": "LocationRef",
+  "namespace": "io.logisticsos.types",
+  "fields": [
+    { "name": "locationId", "type": "string" },
+    { "name": ["null","string"], "name": "type", "default": null, "doc": "WAREHOUSE|DOCK|STORE|DC|PORT|CUSTOMER_SITE" },
+    { "name": ["null","string"], "name": "name", "default": null },
+    { "name": ["null","io.logisticsos.types.GeoPoint"], "name": "geo", "default": null }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "type": "record",
+  "name": "Telemetry",
+  "namespace": "io.logisticsos.obs.v1",
+  "doc": "Scaffold-level telemetry payload (canonicalization pending). Consumed from edge feeds on obs.telemetry.v1.",
+  "fields": [
+    { "name": "telemetryId", "type": "string" },
+    { "name": "deviceId", "type": "string" },
+    { "name": "vehicleId", "type": ["null", "string"], "default": null },
+    { "name": "capturedAt", "type": { "type": "long", "logicalType": "timestamp-millis" } },
+    { "name": "geo", "type": "io.logisticsos.types.GeoPoint" },
+    { "name": "speedKph", "type": ["null", "double"], "default": null },
+    { "name": "cumulativeOdomKm", "type": ["null", "long"], "default": null },
+    { "name": "trailerTempC", "type": ["null", "double"], "default": null },
+    { "name": "batteryVoltage", "type": ["null", "double"], "default": null },
+    { "name": "fuelLevelPct", "type": ["null", "double"], "default": null },
+    { "name": "engineOn", "type": "boolean" }
+  ]
+}

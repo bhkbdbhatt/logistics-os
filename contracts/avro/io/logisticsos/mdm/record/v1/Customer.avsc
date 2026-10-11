@@ -1,0 +1,31 @@
+{
+  "type": "record",
+  "name": "Customer",
+  "namespace": "io.logisticsos.mdm.record.v1",
+  "fields": [
+    { "name": "customerId", "type": "string" },
+    { "name": "tenantId", "type": "string" },
+    { "name": "name", "type": "string" },
+    { "name": "type", "type": {"type":"enum","name":"CustomerType",
+        "symbols":["SHIPPER","BROKER","CONSIGNEE","B2B","RETAIL"]} },
+    { "name": "status", "type": {"type":"enum","name":"CustomerStatus",
+        "symbols":["ACTIVE","ONBOARDING","SUSPENDED","CREDIT_HOLD","CLOSED"]} },
+    { "name": "roles", "type": {"type":"array","items":"string"} },
+    { "name": "billingAddress", "type": "io.logisticsos.types.Address" },
+    { "name": "contacts", "type": {"type":"array","items":"io.logisticsos.types.Contact"} },
+    { "name": "paymentTerms", "type": "string" },
+    { "name": ["null",{"type":"array","items":"io.logisticsos.types.ExternalRef"}], "name": "externalIds", "default": null },
+    { "name": ["null","string"], "name": "taxId", "default": null },
+    { "name": ["null","string"], "name": "duns", "default": null },
+    { "name": ["null","io.logisticsos.types.Money"], "name": "creditLimit", "default": null },
+    { "name": ["null",{"type":"array","items":{
+        "type":"record","name":"Sla","fields":[
+          {"name":"serviceLevel","type":"string"},
+          {"name":"targetTransitHours","type":"int"},
+          {"name":["null","double"],"name":"otdTarget","default":null}
+        ]}}], "name": "serviceLevelAgreements", "default": null },
+    { "name": ["null","string"], "name": "parentCustomerId", "default": null },
+    { "name": ["null","string"], "name": "glAccount", "default": null },
+    { "name": "updatedAt", "type": {"type":"long","logicalType":"timestamp-millis"} }
+  ]
+}

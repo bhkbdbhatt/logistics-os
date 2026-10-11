@@ -1,0 +1,13 @@
+{
+  "type": "record",
+  "name": "ExceptionCaseStateChanged",
+  "namespace": "io.logisticsos.orchestration.v1",
+  "fields": [
+    { "name": "caseId", "type": "string" },
+    { "name": "fromState", "type": "io.logisticsos.orchestration.v1.CaseState" },
+    { "name": "toState", "type": "io.logisticsos.orchestration.v1.CaseState" },
+    { "name": "reason", "type": ["null", "string"], "default": null },
+    { "name": ["null", "string"], "name": "decisionId", "default": null },
+    { "name": "changedAt", "type": { "type": "long", "logicalType": "timestamp-millis" } }
+  ]
+}

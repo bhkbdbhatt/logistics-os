@@ -1,0 +1,34 @@
+{
+  "type": "record",
+  "name": "Vehicle",
+  "namespace": "io.logisticsos.mdm.record.v1",
+  "fields": [
+    { "name": "vehicleId", "type": "string" },
+    { "name": "tenantId", "type": "string" },
+    { "name": "status", "type": {"type":"enum","name":"VehicleStatus",
+        "symbols":["ACTIVE","IN_MAINTENANCE","RETIRED","RESERVED"]} },
+    { "name": "type", "type": {"type":"enum","name":"VehicleType",
+        "symbols":["TRUCK","VAN","TRAILER","CONTAINER","BIKE","VESSEL","RAIL"]} },
+    { "name": "ownership", "type": {"type":"enum","name":"OwnershipType",
+        "symbols":["OWNED","LEASED","PARTNER","CONTRACTOR"]} },
+    { "name": ["null","io.logisticsos.types.CarrierRef"], "name": "carrier", "default": null },
+    { "name": ["null","string"], "name": "vin", "default": null },
+    { "name": ["null","string"], "name": "licensePlate", "default": null },
+    { "name": ["null","string"], "name": "equipmentType", "default": null },
+    { "name": ["null","double"], "name": "maxWeightKg", "default": null },
+    { "name": ["null",{"type":"record","name":"Capacity","fields":[
+        {"name":["null","double"],"name":"volumeM3","default":null},
+        {"name":["null","int"],"name":"palletPositions","default":null},
+        {"name":["null","double"],"name":"lengthM","default":null},
+        {"name":["null","double"],"name":"widthM","default":null},
+        {"name":["null","double"],"name":"heightM","default":null}]}],
+      "name": "capacity", "default": null },
+    { "name": ["null","boolean"], "name": "tempCapable", "default": null },
+    { "name": ["null","io.logisticsos.types.TemperatureRange"], "name": "tempRange", "default": null },
+    { "name": ["null","string"], "name": "telematicsProvider", "default": null },
+    { "name": ["null","io.logisticsos.types.LocationRef"], "name": "currentLocation", "default": null },
+    { "name": ["null","io.logisticsos.types.LocationRef"], "name": "homeLocation", "default": null },
+    { "name": ["null",{"type":"long","logicalType":"timestamp-millis"}], "name": "lastTelemetryAt", "default": null },
+    { "name": ["null","long"], "name": "odometerKm", "default": null }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "type": "record",
+  "name": "ReferenceUpserted",
+  "namespace": "io.logisticsos.mdm.v1",
+  "doc": "Wraps any reference record; deactivation sets active=false. 'record' is the serialized Customer|Carrier|Vehicle|Location from io.logisticsos.mdm.record.v1.",
+  "fields": [
+    { "name": "entityType", "type": {"type":"enum","name":"RefEntityType",
+        "symbols":["CUSTOMER","CARRIER","VEHICLE","LOCATION"]} },
+    { "name": "record", "type": "bytes" },
+    { "name": "active", "type": "boolean" },
+    { "name": "sourceSystem", "type": "string" },
+    { "name": "mergedFrom", "type": ["null",{"type":"array","items":"string"}], "default": null }
+  ]
+}

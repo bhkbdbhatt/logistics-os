@@ -1,0 +1,6 @@
+{
+  "type": "enum",
+  "name": "DeciderType",
+  "namespace": "io.logisticsos.orchestration.v1",
+  "symbols": ["AUTO", "HUMAN", "PARTNER"]
+}

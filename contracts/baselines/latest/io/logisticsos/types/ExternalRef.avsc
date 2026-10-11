@@ -1,0 +1,9 @@
+{
+  "type": "record",
+  "name": "ExternalRef",
+  "namespace": "io.logisticsos.types",
+  "fields": [
+    { "name": "type", "type": "string", "doc": "ORDER|PO|PRO|CUSTOMER|TRACKING" },
+    { "name": "value", "type": "string" }
+  ]
+}

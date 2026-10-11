@@ -1,0 +1,14 @@
+{
+  "type": "record",
+  "name": "ExceptionCaseOpened",
+  "namespace": "io.logisticsos.orchestration.v1",
+  "fields": [
+    { "name": "caseId", "type": "string" },
+    { "name": "triggerId", "type": "string" },
+    { "name": "cascadeTemplate", "type": "string" },
+    { "name": "severity", "type": "io.logisticsos.orchestration.v1.Severity" },
+    { "name": "subject", "type": "io.logisticsos.orchestration.v1.SubjectRefs" },
+    { "name": "state", "type": "io.logisticsos.orchestration.v1.CaseState" },
+    { "name": "openedAt", "type": { "type": "long", "logicalType": "timestamp-millis" } }
+  ]
+}

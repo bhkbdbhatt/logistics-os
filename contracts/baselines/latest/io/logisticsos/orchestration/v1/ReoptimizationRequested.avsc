@@ -1,0 +1,17 @@
+{
+  "type": "record",
+  "name": "ReoptimizationRequested",
+  "namespace": "io.logisticsos.orchestration.v1",
+  "fields": [
+    { "name": "reoptimizationId", "type": "string" },
+    { "name": "caseId", "type": ["null", "string"], "default": null },
+    { "name": "scope", "type": "io.logisticsos.orchestration.v1.ReoptScope" },
+    { "name": "subject", "type": "io.logisticsos.orchestration.v1.SubjectRefs" },
+    { "name": "objective", "type": "io.logisticsos.orchestration.v1.ReoptObjective" },
+    { "name": "priority", "type": "io.logisticsos.orchestration.v1.Severity" },
+    { "name": "triggerIds", "type": { "type": "array", "items": "string" } },
+    { "name": "snapshotRef", "type": ["null", "string"], "default": null },
+    { "name": "deadline", "type": ["null", { "type": "long", "logicalType": "timestamp-millis" }], "default": null },
+    { "name": "requestedAt", "type": { "type": "long", "logicalType": "timestamp-millis" } }
+  ]
+}

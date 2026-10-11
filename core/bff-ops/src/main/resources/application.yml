@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: bff-ops
+
+bff:
+  read-model-base-url: ${READ_MODEL_BASE_URL:http://localhost:8085}
+  tower-base-url: ${TOWER_BASE_URL:http://localhost:8087}
+  mdm-base-url: ${MDM_BASE_URL:http://localhost:8086}
+
+server:
+  port: ${SERVER_PORT:8088}

@@ -1,0 +1,27 @@
+%% Logistics OS - Predictive ETA serving path with latency budget
+%% Rendering: Mermaid sequenceDiagram. See docs/intelligence/predictive-eta.md
+sequenceDiagram
+  autonumber
+  participant V as Visibility/milestone
+  participant BUS as Kafka
+  participant SVC as ETA service
+  participant FEAT as Online feature store
+  participant MODEL as ETA model (quantile GBT)
+  participant SELL as Feature snapshot store
+  participant ORCH as Orchestration (L5)
+  participant FB as Feedback (POD/milestones)
+
+  V->>BUS: vis.milestone.events.v1 / obs.telemetry.v1
+  BUS->>SVC: event (shipmentId, leg)
+  Note over SVC: T+0
+  SVC->>FEAT: get features (p99 < 20 ms)
+  FEAT-->>SVC: feature vector (featuresHash)
+  SVC->>MODEL: score quantiles P10/P50/P90 (p99 < 30 ms)
+  MODEL-->>SVC: prediction
+  SVC->>SELL: persist prediction + feature snapshot
+  SVC->>BUS: intel.prediction.v1 (p99 total < 50 ms)
+  BUS->>ORCH: signal for decision
+  Note over SVC: refresh on each milestone/ping
+  FB->>BUS: tms.shipment.delivered (actual)
+  BUS->>SVC: outcome
+  SVC->>SELL: emit intel.feedback.v1 (label)
