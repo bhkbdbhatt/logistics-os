@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: mdm
-          image: ghcr.io/logistics-os/mdm:0.1.0
+          image: ghcr.io/logistics-os/mdm:0.2.0
           ports:
             - containerPort: 8086
           envFrom:

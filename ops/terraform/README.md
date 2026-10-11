@@ -26,6 +26,20 @@ KAFKA_BOOTSTRAP="$(terraform -chdir=ops/terraform output -raw bootstrap_brokers)
   bash ops/local-compose/scripts/bootstrap-topics.sh
 ```
 
+## Reproducibility, destroy & lockfile hygiene
+
+- **Provider/module pins**: AWS provider `~> 5.0` (`providers.tf`); the MSK module is pinned
+  `~> 4.0` (`main.tf`). Do not bump without a review and a fresh `terraform plan`.
+- **Lockfile**: commit `ops/terraform/.terraform.lock.hcl` after `terraform init` — it pins provider
+  + module checksums so plan/apply are reproducible. The lockfile is not git-ignored (only
+  `.terraform/`, `*.tfstate*`, and `*.tfvars` are).
+- **Destroy**: `terraform -chdir=ops/terraform destroy -var-file=example.tfvars` tears down only this
+  cluster. The backend is `local` (state lives in `ops/terraform/terraform.tfstate`, which is
+  git-ignored) — switch to S3 + DynamoDB locking before any real usage, per the comment in
+  `providers.tf`.
+- **Input validation**: required inputs (`subnet_ids`, `security_group_id`) are enforced in
+  `variables.tf`; apply must always pass an explicit `-var-file` so defaults never mask a mistake.
+
 ## Decisions & gaps (documented, deferred)
 
 - **No Schema Registry yet** — Phase-1 services run `schema.resource=true` (avsc shipped on the

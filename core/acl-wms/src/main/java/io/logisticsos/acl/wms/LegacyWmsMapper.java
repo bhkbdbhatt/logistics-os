@@ -81,6 +81,9 @@ public class LegacyWmsMapper {
         if (legacy.has("completedAt")) {
             canonical.put("completedAt", legacy.path("completedAt").asLong());
         }
+        if (legacy.has("inventoryRef")) {
+            canonical.set("inventoryRef", legacy.path("inventoryRef"));
+        }
         canonical.put("occurredAt", legacy.path("occurredAt").asLong(1720000000000L));
         return parse("io.logisticsos.wms.v1.WmsTaskEvent", canonical,
                 text(legacy, "nodeId"),
@@ -102,6 +105,9 @@ public class LegacyWmsMapper {
         canonical.set("quantity", quantity(legacy));
         if (legacy.has("reasonCode")) {
             canonical.put("reasonCode", legacy.path("reasonCode").asText());
+        }
+        if (legacy.has("referenceRef")) {
+            canonical.put("referenceRef", legacy.path("referenceRef").asText());
         }
         canonical.put("occurredAt", legacy.path("occurredAt").asLong(1720000000000L));
         return parse("io.logisticsos.wms.v1.InventoryMove", canonical,

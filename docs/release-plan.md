@@ -82,6 +82,8 @@ Rollback: source-level release only — revert = revert tag/commit; no distribut
 
 ## 7. Backlog hand-off → 0.2.0 (candidate)
 
+> Fleshed out into a full plan: [release-plan-0.2.0.md](release-plan-0.2.0.md).
+
 - Container image builds (jib/kaniko) + `ghcr.io/logistics-os/*` publish + SBOM/attestation.
 - k8s smoke: kind cluster, `kubectl apply -k ops/k8s`, otel collector trace validation,
   ingest→tower E2E in-cluster.

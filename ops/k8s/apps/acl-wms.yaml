@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: acl-wms
-          image: ghcr.io/logistics-os/acl-wms:0.1.0
+          image: ghcr.io/logistics-os/acl-wms:0.2.0
           ports:
             - containerPort: 8084
           envFrom:

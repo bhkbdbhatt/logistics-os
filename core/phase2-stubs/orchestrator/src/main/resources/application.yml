@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: orchestrator
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+
+orchestrator:
+  command-topic: ${ORCH_COMMAND_TOPIC:orch.command.v1}
+  default-tenant: ${DEFAULT_TENANT:tenant-1}
+  producer: ${ORCH_PRODUCER:orchestrator-stub@0.1.0-SNAPSHOT}
+  emit-enabled: ${ORCH_EMIT_ENABLED:false}
+  emit-interval-millis: ${ORCH_EMIT_INTERVAL_MS:5000}
+  demo-working-set: ${ORCH_DEMO_WORKING_SET:1}
+
+server:
+  port: ${SERVER_PORT:8090}

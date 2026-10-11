@@ -15,6 +15,7 @@ contracts/
       shipment/ShipmentStatus.avsc
       shipment/v1/           Shipment event payloads
       mdm/v1/                Golden-reference payloads (Customer, Carrier, Vehicle, Location, ReferenceUpserted)
+      wms/v1/                Inventory + task payloads (WmsTaskEvent, InventoryMove) - canonical
       orchestration/v1/      Exception-case, decision, escalation, reopt, command payloads
       obs/v1/                Observation payloads (Telemetry, Scan, CarrierStatus) - scaffold
   payload-registry.json      eventType -> payloadSchema mapping for envelope.payload

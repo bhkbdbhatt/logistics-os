@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: control-tower
-          image: ghcr.io/logistics-os/control-tower:0.1.0
+          image: ghcr.io/logistics-os/control-tower:0.2.0
           ports:
             - containerPort: 8087
           envFrom:

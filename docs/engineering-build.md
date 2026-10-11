@@ -21,15 +21,18 @@ requirement for committing — CI is the sole compiler and test runner.
 | `core:read-model-builder` | L2 | CQRS projections → `shipment/inventory.state.v1` | 8085 | `*ProjectionMapperTest`, `ReadModelTopologyIT` |
 | `core:control-tower` | L5/L6 | live ops + alerts + one-click `orch.command.v1` | 8087 | `AlertRuleEngineTest`, `CommandBuilderTest` |
 | `core:bff-ops` | L6 | compose BFF (no domain logic) | 8088 | `OpsViewMapperTest`, `BffOpsControllerTest` |
-| `core:phase2-stubs:orchestrator` | L5 | Phase-2 command stub | — | — |
+| `core:phase2-stubs:orchestrator` | L5 | Phase-2 command stub (emits `orch.command.v1`, `POST /orch/commands`, scheduled heartbeat) | 8090 | `StubCommandBuilderTest`, `CommandEmitIT` |
 | `tools:legacy-simulator` | — | scheduled legacy feed emitter | 8089 | — |
 
 ## 2. Toolchain
 
-- **JDK 21** (Temurin), **Gradle 8.12.1** (pinned in CI via `gradle/actions/setup-gradle`).
-- **No Gradle wrapper** is committed (`.gradle/gradle-wrapper.jar` is git-ignored; it cannot be
-  generated without a local Gradle). CI provisions Gradle directly; contributors can install Gradle
-  or add a wrapper on their machine.
+- **JDK 21** (Temurin), **Gradle 8.12.1** via the **committed wrapper** (`gradlew` / `gradlew.bat`,
+  `gradle/wrapper/gradle-wrapper.jar`, `gradle/wrapper/gradle-wrapper.properties` with a pinned
+  `distributionSha256Sum`). CI validates the wrapper jar and warms the distribution with
+  `gradle/actions/setup-gradle` (`gradle-version: 8.12.1`); the wrapper is the sole build entrypoint,
+  so a system Gradle install is never assumed.
+- Repo-level `gradle.properties` mirrors CI memory settings (`-Xmx2g`) and enables parallel + caching;
+  `GRADLE_OPTS` in CI remains as a fallback for the action bootstrap.
 - Versions live in `gradle/libs.versions.toml` (Spring Boot 3.4.1, Kafka 3.7.1, Avro 1.11.3,
   Confluent 7.6.3). Repos: Maven Central + `packages.confluent.io/maven`.
 - Module plugins use catalog aliases only (`alias(libs.plugins.spring.boot)`,
@@ -92,30 +95,31 @@ environment, local or cloud (`ops/local-compose/scripts/bootstrap-topics.sh`, `K
 
 ## 6. Container image recipe
 
-Images are placeholder-referenced in `ops/k8s` (`ghcr.io/logistics-os/<svc>:0.1.0`). Build recipe:
+Images are built by `.github/workflows/images.yml` (M2 in [release-plan-0.2.0.md](release-plan-0.2.0.md)):
+boot jars via the Gradle wrapper, baked via `ops/containers/service.Dockerfile` (eclipse-temurin:21-jre)
+with the OpenTelemetry java agent embedded, and pushed to `ghcr.io/logistics-os/<svc>:0.2.0` with OCI
+provenance + SBOM attestations. Local equivalent (single service):
 
 ```bash
-gradle :core:mdm:bootJar
-docker build --build-arg JAR=core/mdm/build/libs/mdm-*-SNAPSHOT.jar \
-             -t ghcr.io/logistics-os/mdm:0.1.0 -f - . <<'EOF'
-FROM eclipse-temurin:21-jre
-ARG JAR
-COPY ${JAR} /app/service.jar
-ENTRYPOINT ["java","-jar","/app/service.jar"]
-EOF
+./gradlew :core:mdm:bootJar
+mkdir -p otel && curl -fsSL https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/v1.33.6/opentelemetry-javaagent.jar -o otel/opentelemetry-javaagent.jar
+docker build --build-arg JAR="$(ls core/mdm/build/libs/mdm-*.jar | grep -v plain)" \
+             -t ghcr.io/logistics-os/mdm:0.2.0 -f ops/containers/service.Dockerfile .
 ```
 
 Deploy: `kubectl apply -k ops/k8s`. See [ops/k8s/README.md](../ops/k8s/README.md) for the OpenTelemetry
-Collector wiring (`OTEL_EXPORTER_OTLP_ENDPOINT` from the shared `logistics-os-env` ConfigMap).
+Collector wiring (`OTEL_EXPORTER_OTLP_ENDPOINT` from the shared `logistics-os-env` ConfigMap, which
+overrides the image default).
 
 ## 7. Deferred / known gaps (tracked)
 
-- No container registry pipeline images built yet; no Gradle wrapper; no repo-level `gradle.properties`.
+- No container registry pipeline images built yet; no wrapper → resolved in 0.2.0 (M0).
 - Embedded-Kafka ITs need `spring-kafka-test` to pull `kafka_2.13` (JVM memory on CI runners).
 - `spring.kafka.streams.replication-factor: 1` must be raised per cluster (MSK requires matching
   replication minimum). State-store topology is single-replica.
 - Cloud MSK has no client auth/Schema Registry yet (Phase-1 runs `schema.resource=true`).
-- WMS payloads and orchestration stubs remain `scaffold` status in the payload registry.
+- WMS payloads (`wms.v1.WmsTaskEvent`, `wms.v1.InventoryMove`) are promoted to `canonical` in the
+  registry; orchestration stubs remain `draft` and obs payloads remain `scaffold` status.
 
 ## 8. Contract governance quick reference
 

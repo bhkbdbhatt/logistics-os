@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: ingest-gateway
-          image: ghcr.io/logistics-os/ingest-gateway:0.1.0
+          image: ghcr.io/logistics-os/ingest-gateway:0.2.0
           ports:
             - containerPort: 8081
           envFrom:

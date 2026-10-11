@@ -2,7 +2,7 @@
   "type": "record",
   "name": "WmsTaskEvent",
   "namespace": "io.logisticsos.wms.v1",
-  "doc": "Scaffold-level WMS task state change (canonicalization pending). Emitted by acl-wms from legacy WMS feeds; consumers key on taskId.",
+  "doc": "Canonical WMS task state change. Emitted by acl-wms from legacy WMS feeds; consumers key on taskId.",
   "fields": [
     { "name": "taskId", "type": "string" },
     { "name": "taskType", "type": { "type": "enum", "name": "TaskType",

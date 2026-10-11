@@ -2,7 +2,7 @@
   "type": "record",
   "name": "InventoryMove",
   "namespace": "io.logisticsos.wms.v1",
-  "doc": "Scaffold-level inventory movement (canonicalization pending). Exactly-once effects: consumers insert-or-ignore by idempotencyKey derived from moveSequence. Emitted by acl-wms; consumed by read-model-builder into inventory_view.",
+  "doc": "Canonical inventory movement. Exactly-once effects: consumers insert-or-ignore by idempotencyKey derived from moveSequence. Emitted by acl-wms; consumed by read-model-builder into inventory_view.",
   "fields": [
     { "name": "inventoryId", "type": "string", "doc": "partition key" },
     { "name": "sku", "type": "string" },

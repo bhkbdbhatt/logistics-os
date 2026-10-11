@@ -32,7 +32,7 @@ Boot) implementing the event backbone slice of the architecture:
 
 ```
 platform/  event-envelope · kafka-commons · outbox · idempotency · tenant · observability
-core/      ingest-gateway · acl-tms · acl-wms · mdm · read-model-builder · control-tower · bff-ops
+core/      ingest-gateway · acl-tms · acl-wms · mdm · read-model-builder · control-tower · bff-ops · phase2-stubs/orchestrator
 tools/     legacy-simulator          ops/    local-compose · terraform · k8s           .github/  CI
 contracts/ avro schemas · registry · validation · baselines
 ```
@@ -56,6 +56,7 @@ README.md
 docs/
 ├─ engineering-build.md        # build/test/run/container/deploy runbook (Phase-1 scaffold)
 ├─ release-plan.md             # 0.1.0 scope, DoD, milestones, risks, 0.2.0 backlog
+├─ release-plan-0.2.0.md       # 0.2.0 scope (images + k8s smoke + MSK + wrapper), DoD, milestones, risks
 ├─ architecture.md            # layered architecture + sources of truth
 ├─ data-model.md              # canonical objects, ownership, lifecycles
 ├─ events.md                  # envelope, topics, delivery, replay

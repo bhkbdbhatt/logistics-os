@@ -24,8 +24,8 @@
 
     { "eventType": "io.logisticsos.mdm.v1.ReferenceUpserted", "payloadSchema": "io.logisticsos.mdm.v1.ReferenceUpserted", "kind": "event", "status": "canonical", "sourceManager": "mdm", "version": 1 },
 
-    { "eventType": "io.logisticsos.wms.v1.WmsTaskEvent", "payloadSchema": "io.logisticsos.wms.v1.WmsTaskEvent", "kind": "event", "status": "scaffold", "sourceManager": "acl-wms", "version": 1 },
-    { "eventType": "io.logisticsos.wms.v1.InventoryMove", "payloadSchema": "io.logisticsos.wms.v1.InventoryMove", "kind": "event", "status": "scaffold", "sourceManager": "acl-wms", "version": 1 },
+    { "eventType": "io.logisticsos.wms.v1.WmsTaskEvent", "payloadSchema": "io.logisticsos.wms.v1.WmsTaskEvent", "kind": "event", "status": "canonical", "sourceManager": "acl-wms", "version": 1 },
+    { "eventType": "io.logisticsos.wms.v1.InventoryMove", "payloadSchema": "io.logisticsos.wms.v1.InventoryMove", "kind": "event", "status": "canonical", "sourceManager": "acl-wms", "version": 1 },
 
     { "eventType": "io.logisticsos.orchestration.v1.TriggerEvaluated", "payloadSchema": "io.logisticsos.orchestration.v1.TriggerEvaluated", "kind": "event", "status": "draft", "sourceManager": "orchestrator", "version": 1 },
     { "eventType": "io.logisticsos.orchestration.v1.ExceptionCaseOpened", "payloadSchema": "io.logisticsos.orchestration.v1.ExceptionCaseOpened", "kind": "event", "status": "draft", "sourceManager": "orchestrator", "version": 1 },

@@ -1,0 +1,127 @@
+# Builds + publishes the eight deployable services as images to ghcr.io/logistics-os/<svc>.
+# Triggered on release tags (v*) or manually via workflow_dispatch. Each image embeds the OTel
+# java agent and carries OCI provenance + SBOM attestations (docker buildx buildkit).
+#
+# Part of release-plan-0.2.0 M2 (images + SBOM/provenance + otel agent).
+
+name: Images
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: "Override image tag (default: semver/ref)"
+        required: false
+        type: string
+      push:
+        description: "Push to GHCR (unchecked = local load only, for verification)"
+        required: false
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+  packages: write
+
+concurrency:
+  group: images-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  OTEL_AGENT_VERSION: "v1.33.6"
+
+jobs:
+  build:
+    name: Build & publish (${{ matrix.service }})
+    runs-on: ubuntu-latest
+    env:
+      GRADLE_OPTS: "-Dorg.gradle.jvmargs=-Xmx2g"
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - service: mdm
+            module: core/mdm
+          - service: ingest-gateway
+            module: core/ingest-gateway
+          - service: acl-tms
+            module: core/acl-tms
+          - service: acl-wms
+            module: core/acl-wms
+          - service: read-model-builder
+            module: core/read-model-builder
+          - service: control-tower
+            module: core/control-tower
+          - service: bff-ops
+            module: core/bff-ops
+          - service: legacy-simulator
+            module: tools/legacy-simulator
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: gradle/wrapper-validation-action@v3
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.12.1"
+
+      - name: Build all service boot jars
+        run: ./gradlew bootJar --no-daemon
+
+      - name: Resolve boot jar artifact
+        id: jar
+        run: |
+          jar="$(find "${{ matrix.module }}/build/libs" -maxdepth 1 -name '*.jar' -not -name '*-plain.jar' | head -1)"
+          test -n "$jar" || { echo "no boot jar under ${{ matrix.module }}/build/libs"; exit 1; }
+          echo "jar=${jar}" >> "$GITHUB_OUTPUT"
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Download OTel java agent
+        run: |
+          mkdir -p otel
+          curl -fsSL "https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/${OTEL_AGENT_VERSION}/opentelemetry-javaagent.jar" \
+            -o otel/opentelemetry-javaagent.jar
+
+      # Push only on release tags, or a dispatch explicitly opting in. Note: inputs arrive as
+      # strings, so compare against 'true' rather than truthiness.
+      - name: Log in to GHCR
+        if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.push == 'true' || startsWith(github.ref, 'refs/tags/v') }}
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Resolve image tags
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/logistics-os/${{ matrix.service }}
+          tags: |
+            type=raw,value=${{ github.event.inputs.image_tag }},enable=${{ github.event_name == 'workflow_dispatch' && github.event.inputs.image_tag != '' }}
+            type=semver,pattern={{version}},event=tag
+            type=sha,format=short
+          flavor: |
+            latest=${{ startsWith(github.ref, 'refs/tags/v') }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ops/containers/service.Dockerfile
+          build-args: |
+            JAR=${{ steps.jar.outputs.jar }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          push: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.push == 'true' || startsWith(github.ref, 'refs/tags/v') }}
+          load: ${{ !(github.event_name == 'workflow_dispatch' && github.event.inputs.push == 'true' || startsWith(github.ref, 'refs/tags/v')) }}
+          provenance: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.push == 'true' || startsWith(github.ref, 'refs/tags/v') }}
+          sbom: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.push == 'true' || startsWith(github.ref, 'refs/tags/v') }}

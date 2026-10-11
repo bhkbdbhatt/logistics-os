@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: read-model-builder
-          image: ghcr.io/logistics-os/read-model-builder:0.1.0
+          image: ghcr.io/logistics-os/read-model-builder:0.2.0
           ports:
             - containerPort: 8085
           envFrom:

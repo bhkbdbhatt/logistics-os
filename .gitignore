@@ -3,7 +3,7 @@
 build/
 !**/src/main/**/build/
 !**/src/test/**/build/
-gradle/wrapper/gradle-wrapper.jar
+# The wrapper jar/gradlew are committed for reproducible builds (0.2.0 M0).
 
 # IDE
 .idea/

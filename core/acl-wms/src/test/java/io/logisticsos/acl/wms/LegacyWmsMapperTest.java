@@ -92,6 +92,21 @@ class LegacyWmsMapperTest {
     }
 
     @Test
+    void mapsTaskUpdateToWmsTaskEventWithInventoryRef() {
+        String taskWithRef = TASK_JSON.replace(
+                "\"assignedWorkerId\": \"W-8\",",
+                "\"assignedWorkerId\": \"W-8\",\n"
+                        + "      \"inventoryRef\": {\"locationId\": \"WH-AMS\", \"type\": \"WAREHOUSE\"},");
+        LegacyWmsMapper.ParsedEvent event = new LegacyWmsMapper(schemas).map(taskWithRef);
+
+        var record = PayloadAvro.fromBytes(PayloadAvro.toBytes(event.record()),
+                schemas.resolve(event.schemaSubject()));
+        var inventoryRef = (org.apache.avro.generic.GenericRecord) record.get("inventoryRef");
+        assertThat(inventoryRef.get("locationId").toString()).isEqualTo("WH-AMS");
+        assertThat(inventoryRef.get("type").toString()).isEqualTo("WAREHOUSE");
+    }
+
+    @Test
     void mapsStockMoveToInventoryMove() {
         LegacyWmsMapper.ParsedEvent event = new LegacyWmsMapper(schemas).map(STOCK_MOVE_JSON);
 
@@ -103,6 +118,19 @@ class LegacyWmsMapperTest {
         assertThat(record.get("sku").toString()).isEqualTo("SKU-500");
         assertThat(record.get("moveSequence")).isEqualTo(3L);
         assertThat(record.get("toLocation").toString()).isEqualTo("C-09-A");
+    }
+
+    @Test
+    void mapsStockMoveWithReferenceRefToInventoryMove() {
+        String moveWithRef = STOCK_MOVE_JSON.replace(
+                "\"reasonCode\": \"REBALANCE\",",
+                "\"reasonCode\": \"REBALANCE\",\n"
+                        + "      \"referenceRef\": \"PO-888\",");
+        LegacyWmsMapper.ParsedEvent event = new LegacyWmsMapper(schemas).map(moveWithRef);
+
+        var record = PayloadAvro.fromBytes(PayloadAvro.toBytes(event.record()),
+                schemas.resolve(event.schemaSubject()));
+        assertThat(record.get("referenceRef").toString()).isEqualTo("PO-888");
     }
 
     @Test
