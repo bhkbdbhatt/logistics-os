@@ -1,6 +1,7 @@
 package io.logisticsos.tower;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import io.logisticsos.entitlement.EntitlementGate;
 import java.util.List;
 import java.util.Map;
 import org.springframework.http.ResponseEntity;
@@ -27,10 +28,12 @@ public class TowerController {
 
     private final TowerCache cache;
     private final CommandDispatcher dispatcher;
+    private final EntitlementGate entitlementGate;
 
-    public TowerController(TowerCache cache, CommandDispatcher dispatcher) {
+    public TowerController(TowerCache cache, CommandDispatcher dispatcher, EntitlementGate entitlementGate) {
         this.cache = cache;
         this.dispatcher = dispatcher;
+        this.entitlementGate = entitlementGate;
     }
 
     @GetMapping("/shipments")
@@ -75,5 +78,17 @@ public class TowerController {
                 "openAlerts", cache.openAlertCount(),
                 "lastSnapshotAt", cache.lastSnapshotMillis(),
                 "status", "ok");
+    }
+
+    @GetMapping("/entitlement")
+    public Map<String, Object> entitlement() {
+        var e = entitlementGate.entitlement();
+        return Map.of(
+                "edition", e.edition(),
+                "version", e.version(),
+                "tenant", e.tenant(),
+                "mode", e.mode().name().toLowerCase(java.util.Locale.ROOT),
+                "expiresAt", e.expiresAt() == null ? "" : e.expiresAt().toString(),
+                "features", e.features());
     }
 }

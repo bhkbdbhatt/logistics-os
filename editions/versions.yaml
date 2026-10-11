@@ -1,0 +1,23 @@
+# Version map for each sellable edition. Updated at every release cut (see docs/product/versioning-support.md).
+# `current` = recommended version; `lts` = long-term-support version; `supported` = versions still receiving fixes.
+version: 1
+channels:
+  stable: "Recommended for production. Backward-compatible; follows semver."
+  lts: "Long-term support: 24-month security/regression fixes. Enterprise only."
+  beta: "Pre-release preview. No support SLA; breaking changes possible."
+editions:
+  standard:
+    current: 1.0.0
+    lts: null
+    supported: ["1.0.0"]
+    channels: [stable]
+  professional:
+    current: 1.0.0
+    lts: null
+    supported: ["1.0.0"]
+    channels: [stable, beta]
+  enterprise:
+    current: 1.0.0
+    lts: 1.0.0
+    supported: ["1.0.0"]
+    channels: [stable, lts, beta]

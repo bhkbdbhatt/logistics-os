@@ -1,0 +1,55 @@
+Logistics OS — End User License Agreement (EULA)
+
+Copyright (c) 2026 <Legal Entity>. All rights reserved.
+
+This software and its source code, documentation, configuration, container images, and
+associated artifacts (the "Software") are proprietary and are licensed, not sold.
+
+1. LICENSE GRANT
+   Subject to a valid, paid subscription and a signed license issued by <Legal Entity>
+   ("License"), <Legal Entity> grants you a non-exclusive, non-transferable, non-sublicensable,
+   limited license to deploy and use the Software for the edition ("Edition"), version,
+   tenant(s), term, and feature set stated in the License, solely for your internal business
+   purposes.
+
+2. RESTRICTIONS
+   You shall not: (a) copy, modify, or create derivative works of the Software except as expressly
+   permitted in writing; (b) redistribute, sublicense, lease, or make the Software available to
+   third parties as a service bureau or hosted offering; (c) remove or alter any proprietary
+   notices; (d) use the Software beyond the scope of the License (including edition, seat, or
+   throughput limits); or (e) use the Software to develop a competing product.
+
+3. EDITIONS AND FEATURES
+   The Software is offered as catalogued Editions (see editions/). Each Edition enables a defined
+   set of services and features and is enforced through the licensing/entitlement mechanism. Use of
+   features outside your licensed Edition is not permitted and may be technically gated.
+
+4. THIRD-PARTY COMPONENTS
+   The Software incorporates third-party open-source components that are licensed separately under
+   their own terms. Those terms are disclosed in THIRD-PARTY-NOTICES.md and, where required, in the
+   release SBOM. Nothing in this EULA limits your rights under those licenses.
+
+5. SUPPORT AND MAINTENANCE
+   Support, maintenance, updates, and service levels are provided only as set out in your
+   subscription agreement and support tier.
+
+6. WARRANTY DISCLAIMER
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
+   BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND
+   NONINFRINGEMENT.
+
+7. LIMITATION OF LIABILITY
+   TO THE MAXIMUM EXTENT PERMITTED BY LAW, <LEGAL ENTITY> SHALL NOT BE LIABLE FOR ANY INDIRECT,
+   INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES, OR ANY LOSS OF PROFITS, DATA, OR
+   BUSINESS, ARISING OUT OF OR RELATED TO THE SOFTWARE. <LEGAL ENTITY>'S TOTAL AGGREGATE LIABILITY
+   SHALL NOT EXCEED THE FEES PAID FOR THE SOFTWARE IN THE TWELVE (12) MONTHS PRECEDING THE CLAIM.
+
+8. TERMINATION
+   This EULA is effective until terminated. It terminates automatically if you breach it or if your
+   subscription or License expires. On termination you must cease all use and remove the Software.
+
+9. GOVERNING LAW
+   This EULA is governed by the laws of <Jurisdiction>, without regard to its conflict-of-laws
+   rules.
+
+Contact: legal@<domain>

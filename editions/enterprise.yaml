@@ -1,0 +1,41 @@
+# SKU: enterprise — everything in Professional plus L5 orchestration, dedicated isolation, SSO,
+# audit retention, and analytics exports.
+name: enterprise
+title: Logistics OS Enterprise
+tier: 3
+description: >
+  Optimize and scale. Adds the L5 orchestrator (saga/statechart), a dedicated isolation option
+  (namespace/cluster per tenant), SSO/SAML, 7-year audit retention, and analytics exports.
+status: ga
+support_tier: premium
+default_version: 1.0.0
+channels: [stable, lts, beta]
+services:
+  - name: ingest-gateway
+    module: core/ingest-gateway
+  - name: acl-tms
+    module: core/acl-tms
+  - name: acl-wms
+    module: core/acl-wms
+  - name: mdm
+    module: core/mdm
+  - name: read-model-builder
+    module: core/read-model-builder
+  - name: control-tower
+    module: core/control-tower
+  - name: bff-ops
+    module: core/bff-ops
+  - name: orchestrator
+    module: core/phase2-stubs/orchestrator
+features:
+  canonical_model: true
+  cqrs_read_models: true
+  control_tower_readonly: true
+  logical_tenant: true
+  ops_actions: true
+  tenant_quotas: true
+  l5_orchestration: true
+  dedicated_isolation: true
+  sso_saml: true
+  audit_retention_7y: true
+  analytics_exports: true

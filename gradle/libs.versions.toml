@@ -16,6 +16,7 @@ opentelemetry = "1.44.1"
 junit = "5.10.3"
 assertj = "3.26.3"
 slf4j = "2.0.16"
+jackson = "2.18.2"
 
 [libraries]
 # Spring Boot starters
@@ -40,6 +41,9 @@ avro = { module = "org.apache.avro:avro" }
 avro-tools = { module = "org.apache.avro:avro-tools" }
 confluent-kafka-avro-serializer = { module = "io.confluent:kafka-avro-serializer" }
 confluent-schema-registry-client = { module = "io.confluent:kafka-schema-registry-client" }
+
+# JSON (framework-agnostic modules that do not inherit the Spring dependency-management BOM)
+jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "jackson" }
 
 # Storage / infra
 postgresql = { module = "org.postgresql:postgresql" }

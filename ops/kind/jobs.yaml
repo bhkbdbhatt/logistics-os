@@ -24,7 +24,7 @@ spec:
             - -c
             - |
               set -euo pipefail
-              BOOTSTRAP="logistics-os-kafka:9092"
+              BOOTSTRAP="logistics-os-kafka.logistics-os.svc.cluster.local:9092"
               KAFKA_BIN="/opt/bitnami/kafka/bin"
               echo "waiting for Kafka at ${BOOTSTRAP} ..."
               for _ in $(seq 1 60); do
@@ -81,7 +81,7 @@ spec:
               KAFKA_BIN="/opt/bitnami/kafka/bin"
               echo "waiting for a canonical tms record (legacy-simulator -> acl-tms) ..."
               "$KAFKA_BIN/kafka-console-consumer.sh" \
-                --bootstrap-server logistics-os-kafka:9092 \
+                --bootstrap-server logistics-os-kafka.logistics-os.svc.cluster.local:9092 \
                 --topic tms.shipment.events.v1 \
                 --max-messages 1 --timeout-ms 90000
               echo "pipeline OK: canonical event observed"

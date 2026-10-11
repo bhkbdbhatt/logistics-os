@@ -31,10 +31,11 @@ Docs-first aside, the repo now contains a buildable Phase-1 scaffold (Java 21 + 
 Boot) implementing the event backbone slice of the architecture:
 
 ```
-platform/  event-envelope · kafka-commons · outbox · idempotency · tenant · observability
+platform/  event-envelope · kafka-commons · outbox · idempotency · tenant · observability · entitlement
 core/      ingest-gateway · acl-tms · acl-wms · mdm · read-model-builder · control-tower · bff-ops · phase2-stubs/orchestrator
-tools/     legacy-simulator          ops/    local-compose · terraform · k8s           .github/  CI
+tools/     legacy-simulator          ops/    local-compose · terraform · k8s (+ overlays)   .github/  CI · images · smoke · release
 contracts/ avro schemas · registry · validation · baselines
+editions/  sellable SKU catalog (standard · professional · enterprise) + versions
 ```
 
 **Run it** (see [ops/local-compose/README.md](ops/local-compose/README.md) and
@@ -53,10 +54,19 @@ full `gradle build` (unit + embedded-Kafka ITs).
 
 ```
 README.md
+LICENSE                       # proprietary EULA (see docs/product/licensing.md)
+THIRD-PARTY-NOTICES.md        # OSS component disclosures (summary; release SBOM is authoritative)
 docs/
 ├─ engineering-build.md        # build/test/run/container/deploy runbook (Phase-1 scaffold)
 ├─ release-plan.md             # 0.1.0 scope, DoD, milestones, risks, 0.2.0 backlog
 ├─ release-plan-0.2.0.md       # 0.2.0 scope (images + k8s smoke + MSK + wrapper), DoD, milestones, risks
+├─ releases/
+│  └─ 0.2.0.md                 # 0.2.0 release notes (draft; digests/transcript filled at cut)
+├─ product/                    # commercial model: editions, licensing, versioning, delivery
+│  ├─ editions.md              # sellable SKUs (standard/professional/enterprise) + customer branding
+│  ├─ licensing.md             # entitlements (soft now, signed license later)
+│  ├─ versioning-support.md    # semver, channels (stable/lts/beta), support windows, upgrades
+│  └─ packaging-delivery.md    # hosted SaaS vs self-hosted release artifacts
 ├─ architecture.md            # layered architecture + sources of truth
 ├─ data-model.md              # canonical objects, ownership, lifecycles
 ├─ events.md                  # envelope, topics, delivery, replay

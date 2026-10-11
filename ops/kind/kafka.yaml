@@ -1,5 +1,6 @@
-# Single-broker Kafka for the smoke test only (KRaft mode, no ZooKeeper). The Service is named
-# `logistics-os-kafka` so it satisfies the shared `logistics-os-env` ConfigMap bootstrap address.
+# Single-broker Kafka for the smoke test only (KRaft mode, no ZooKeeper). The advertised listener
+# uses the fully-qualified Service DNS so customer overlays in other namespaces (logistics-os-<c>)
+# can reach it; the shared `logistics-os-env` ConfigMap uses the same FQDN.
 # Do NOT use this manifest for anything beyond a throwaway kind cluster: plaintext, RF=1.
 apiVersion: apps/v1
 kind: Deployment
@@ -35,7 +36,7 @@ spec:
             - name: KAFKA_CFG_LISTENERS
               value: "PLAINTEXT://:9092,CONTROLLER://:9093"
             - name: KAFKA_CFG_ADVERTISED_LISTENERS
-              value: "PLAINTEXT://logistics-os-kafka:9092"
+              value: "PLAINTEXT://logistics-os-kafka.logistics-os.svc.cluster.local:9092"
             - name: KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP
               value: "CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT"
             - name: KAFKA_CFG_CONTROLLER_LISTENER_NAMES

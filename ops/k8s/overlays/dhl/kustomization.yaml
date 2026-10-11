@@ -1,0 +1,40 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# Customer overlay: DHL — Enterprise edition (includes L5 orchestration).
+# Deploy with: kubectl apply -k ops/k8s/overlays/dhl
+namespace: logistics-os-dhl
+
+resources:
+  - namespace.yaml
+  - ../..
+  - ../../apps/orchestrator.yaml
+
+commonLabels:
+  customer: dhl
+
+commonAnnotations:
+  logistics-os.io/edition: enterprise
+
+images:
+  - name: ghcr.io/logistics-os/mdm
+    newTag: dhl-0.2.0
+  - name: ghcr.io/logistics-os/ingest-gateway
+    newTag: dhl-0.2.0
+  - name: ghcr.io/logistics-os/acl-tms
+    newTag: dhl-0.2.0
+  - name: ghcr.io/logistics-os/acl-wms
+    newTag: dhl-0.2.0
+  - name: ghcr.io/logistics-os/read-model-builder
+    newTag: dhl-0.2.0
+  - name: ghcr.io/logistics-os/control-tower
+    newTag: dhl-0.2.0
+  - name: ghcr.io/logistics-os/bff-ops
+    newTag: dhl-0.2.0
+  - name: ghcr.io/logistics-os/legacy-simulator
+    newTag: dhl-0.2.0
+  - name: ghcr.io/logistics-os/orchestrator
+    newTag: dhl-0.2.0
+
+patches:
+  - path: config-patch.yaml

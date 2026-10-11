@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: logistics-os-env
+data:
+  DEFAULT_TENANT: "fedex"
+  COMPANY: "fedex"
+  ENTITLEMENT_EDITION: "professional"
+  OTEL_EXPORTER_OTLP_ENDPOINT: "http://otel-collector.logistics-os-fedex.svc.cluster.local:4317"
+  ENTITLEMENT_LICENSE: '{"licenseId":"LIC-FDX-0001","tenant":"fedex","edition":"professional","version":"0.2.0","expiresAt":"2027-01-01T00:00:00Z","features":{"ops_actions":true,"l5_orchestration":false}}'

@@ -14,6 +14,7 @@ requirement for committing — CI is the sole compiler and test runner.
 | `platform:event-envelope` | L2 | `EventEnvelope`, builder, ULID, codec | — | builder/codec unit |
 | `platform:kafka-commons` | L2 | serde, `SchemaResolvers`, `PayloadAvro`, `EnvelopeRouting` | — | `EventEnvelopeSerdeTest`, resolver tests |
 | `platform:outbox` / `idempotency` / `tenant` / `observability` | L2 | cross-cutting libs | — | platform unit tests |
+| `platform:entitlement` | — | edition feature flags + licensing seam (soft now) | — | `EntitlementLoaderTest`, `EntitlementTest` |
 | `core:ingest-gateway` | L1 | REST ingest → obs.* canonical | 8081 | `IngestServiceTest`, `KafkaIngestPublisherIT` |
 | `core:acl-tms` | L1 | legacy TMS JSON → `tms.shipment.events.v1` | 8083 | `LegacyTmsMapperTest`, `TmsPipelineIT` |
 | `core:acl-wms` | L1 | legacy WMS JSON → obs/wms canonical | 8084 | `LegacyWmsMapperTest` |
@@ -93,6 +94,14 @@ environment, local or cloud (`ops/local-compose/scripts/bootstrap-topics.sh`, `K
 1. **Contract gates** — `validateSchemas`, `reconcile.sh`, `snapshot-baselines.sh` (drift check).
 2. **Build & tests** — `gradle build` (needs `contracts` green first), plus a jar-integrity step.
 
+Additional workflows:
+
+- `images.yml` — build/publish the service images (M2).
+- `smoke.yml` — kind E2E smoke on **manual dispatch + nightly** (`ops/kind/smoke.sh`; builds + loads
+  images locally by default, optional `OVERLAY=<customer>`).
+- `release.yml` — edition/version build → push → **cosign keyless sign** by digest; base run also
+  publishes the GitHub release.
+
 ## 6. Container image recipe
 
 Images are built by `.github/workflows/images.yml` (M2 in [release-plan-0.2.0.md](release-plan-0.2.0.md)):
@@ -107,15 +116,21 @@ docker build --build-arg JAR="$(ls core/mdm/build/libs/mdm-*.jar | grep -v plain
              -t ghcr.io/logistics-os/mdm:0.2.0 -f ops/containers/service.Dockerfile .
 ```
 
-Deploy: `kubectl apply -k ops/k8s`. See [ops/k8s/README.md](../ops/k8s/README.md) for the OpenTelemetry
-Collector wiring (`OTEL_EXPORTER_OTLP_ENDPOINT` from the shared `logistics-os-env` ConfigMap, which
-overrides the image default).
+Deploy: `kubectl apply -k ops/k8s`. Per-customer deployments use an overlay
+(`kubectl apply -k ops/k8s/overlays/<customer>`) that sets the namespace, image tag, branding, and a
+soft license (see [ops/k8s/overlays/README.md](../ops/k8s/overlays/README.md)). See
+[ops/k8s/README.md](../ops/k8s/README.md) for the OpenTelemetry Collector wiring
+(`OTEL_EXPORTER_OTLP_ENDPOINT` from the shared `logistics-os-env` ConfigMap, which overrides the
+image default).
 
 ## 7. Deferred / known gaps (tracked)
 
 - Container image pipeline added in 0.2.0 (`.github/workflows/images.yml` + `ops/containers/service.Dockerfile`);
   still needs a live `v*` tag run to produce/attest the GHCR images. The `kind` smoke suite under
-  `ops/kind/` is written but not yet wired into CI (needs a Docker-capable runner).
+  `ops/kind/` is wired into CI via `.github/workflows/smoke.yml` (manual + nightly, local image
+  build) and still needs a first green run on a Docker-capable runner.
+- `platform:entitlement` is **soft** (permissive) enforcement; signed-license verification, tenant
+  binding, and expiry/limit enforcement are the "hard" follow-up (docs/product/licensing.md).
 - Embedded-Kafka ITs need `spring-kafka-test` to pull `kafka_2.13` (JVM memory on CI runners).
 - `spring.kafka.streams.replication-factor` now reads `STREAMS_REPLICATION_FACTOR` (default `1`);
   raise it per cluster to match the MSK replication minimum. State-store topology is single-replica.

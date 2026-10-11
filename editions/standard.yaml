@@ -1,0 +1,38 @@
+# SKU: standard — free/entry edition. Deployed service subset + runtime feature flags.
+# Source of truth for the catalog is this directory; `versions.yaml` tracks release versions.
+# Schema: editions/schema.json (validated by contracts/CI).
+name: standard
+title: Logistics OS Standard
+tier: 1
+description: >
+  Connect and observe. Canonical model, CQRS read models, MDM, and a read-only control tower for
+  a single tenant. The on-ramp edition.
+status: ga
+support_tier: community
+default_version: 1.0.0
+channels: [stable]
+services:
+  - name: ingest-gateway
+    module: core/ingest-gateway
+  - name: acl-tms
+    module: core/acl-tms
+  - name: acl-wms
+    module: core/acl-wms
+  - name: mdm
+    module: core/mdm
+  - name: read-model-builder
+    module: core/read-model-builder
+  - name: control-tower
+    module: core/control-tower
+features:
+  canonical_model: true
+  cqrs_read_models: true
+  control_tower_readonly: true
+  logical_tenant: true
+  ops_actions: false
+  tenant_quotas: false
+  l5_orchestration: false
+  dedicated_isolation: false
+  sso_saml: false
+  audit_retention_7y: false
+  analytics_exports: false

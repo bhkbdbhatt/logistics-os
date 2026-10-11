@@ -24,6 +24,15 @@
 > reproducible toolchain (Gradle wrapper), and the first Phase-2 surface (WMS payload completeness +
 > a real L5 orchestrator stub). It also retires the drift between `settings.gradle.kts` and
 > `docs/engineering-build.md` for the orchestrator module.
+> M3 wired: `.github/workflows/smoke.yml` runs `ops/kind/smoke.sh` on **manual dispatch + nightly**,
+> building images locally and `kind load`-ing them (published-image mode via GHCR login optional).
+> M2 baked into a release path: `.github/workflows/release.yml` builds an **edition's** service subset
+> (`editions/<edition>.yaml`, schema-validated), pushes to GHCR, and **cosign**-signs by digest; a base
+> run also publishes the GitHub release from `docs/releases/<version>.md`.
+> Productization slice (preview, beyond the 0.2.0 gates): a sellable SKU catalog (`editions/`),
+> commercial docs (`docs/product/`), a framework-agnostic `platform:entitlement` seam wired into
+> `control-tower` (`GET /tower/entitlement`; soft/permissive now), and per-customer k8s overlays
+> (`ops/k8s/overlays/{dhl,fedex}`) that set namespace + image tag + branding + license.
 
 ## 1. Goal
 
@@ -120,6 +129,7 @@ tag/commit. No data migrations in this release.
 5. Commit `release: 0.2.0`; annotated tag `v0.2.0`; push tag; publish GitHub release with digests.
 6. Release notes: image list + digests, `docs/engineering-build.md` §6/§7, `ops/k8s/README.md` and
    `ops/local-compose/README.md` links, `kind` smoke transcript, known limitations, 0.3.0 backlog.
+   (draft: [docs/releases/0.2.0.md](releases/0.2.0.md), with a cut-checklist status table)
 7. Sign-off by docs owner + CI owner + platform owner.
 
 ## 7. Backlog hand-off → 0.3.0 (candidate)

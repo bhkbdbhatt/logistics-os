@@ -19,3 +19,25 @@ resources:
 
 commonLabels:
   app.kubernetes.io/part-of: logistics-os
+
+# Single override point for the image tag (overlays such as ops/k8s/overlays/<customer> replace it
+# with a customer/edition tag). Keep in sync with the manifests' default tags.
+images:
+  - name: ghcr.io/logistics-os/mdm
+    newTag: 0.2.0
+  - name: ghcr.io/logistics-os/ingest-gateway
+    newTag: 0.2.0
+  - name: ghcr.io/logistics-os/acl-tms
+    newTag: 0.2.0
+  - name: ghcr.io/logistics-os/acl-wms
+    newTag: 0.2.0
+  - name: ghcr.io/logistics-os/read-model-builder
+    newTag: 0.2.0
+  - name: ghcr.io/logistics-os/control-tower
+    newTag: 0.2.0
+  - name: ghcr.io/logistics-os/bff-ops
+    newTag: 0.2.0
+  - name: ghcr.io/logistics-os/legacy-simulator
+    newTag: 0.2.0
+  - name: ghcr.io/logistics-os/orchestrator
+    newTag: 0.2.0

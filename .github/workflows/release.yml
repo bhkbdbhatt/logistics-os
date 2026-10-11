@@ -1,0 +1,165 @@
+name: release
+
+# Build, tag, push, and sign the images for one edition (see editions/ and docs/product/).
+# Base release:  edition=enterprise version=0.2.0            -> ghcr.io/logistics-os/*:0.2.0
+# Customer build: edition=enterprise version=0.2.0 customer=dhl -> ghcr.io/logistics-os/*:dhl-0.2.0
+on:
+  workflow_dispatch:
+    inputs:
+      edition:
+        description: "Edition to release (editions/<name>.yaml)"
+        type: choice
+        options: [standard, professional, enterprise]
+        default: enterprise
+      version:
+        description: "Version to build (semver, e.g. 0.2.0)"
+        required: true
+        default: "0.2.0"
+      customer:
+        description: "Optional customer slug -> image tag <customer>-<version>"
+        required: false
+        default: ""
+      sign:
+        description: "cosign (keyless) sign the pushed digests"
+        type: boolean
+        default: true
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+  packages: write
+  id-token: write
+
+jobs:
+  validate:
+    name: validate edition
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.edition.outputs.matrix }}
+      tag: ${{ steps.tag.outputs.tag }}
+      version: ${{ steps.tag.outputs.version }}
+      customer: ${{ steps.tag.outputs.customer }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Resolve edition -> build matrix (validated)
+        id: edition
+        env:
+          EDITION: ${{ github.event.inputs.edition || 'enterprise' }}
+        run: |
+          python3 -m pip install --quiet --disable-pip-version-check pyyaml jsonschema
+          python3 - "$EDITION" <<'PY' >> "$GITHUB_OUTPUT"
+          import json, sys, yaml, jsonschema
+          edition = sys.argv[1]
+          schema = json.load(open("editions/schema.json"))
+          doc = yaml.safe_load(open(f"editions/{edition}.yaml"))
+          jsonschema.validate(doc, schema)
+          matrix = [
+              {"service": s["name"], "module": ":" + s["module"].replace("/", ":")}
+              for s in doc["services"]
+          ]
+          print("matrix=" + json.dumps(matrix))
+          print(f"::notice title=edition::{edition} ({len(matrix)} services)")
+          PY
+
+      - name: Resolve image tag
+        id: tag
+        env:
+          VERSION: ${{ github.event.inputs.version || github.ref_name }}
+          CUSTOMER: ${{ github.event.inputs.customer }}
+        run: |
+          version="${VERSION#v}"
+          if [ -n "$CUSTOMER" ]; then tag="${CUSTOMER}-${version}"; else tag="$version"; fi
+          {
+            echo "version=$version"
+            echo "customer=$CUSTOMER"
+            echo "tag=$tag"
+          } >> "$GITHUB_OUTPUT"
+          echo "image tag: $tag"
+
+  build:
+    name: build ${{ matrix.service }}
+    needs: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJSON(needs.validate.outputs.matrix) }}
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Assemble build context
+        run: |
+          module="${{ matrix.module }}"
+          dir="${module#:}"; dir="${dir//://}"
+          ./gradlew -q "${module}:bootJar"
+          jar="$(find "$dir/build/libs" -maxdepth 1 -name '*.jar' ! -name '*-plain.jar' | head -n1)"
+          [ -n "$jar" ] || { echo "no boot jar for ${module}" >&2; exit 1; }
+          mkdir -p build-context/otel
+          curl -fsSL -o build-context/otel/opentelemetry-javaagent.jar \
+            "https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/v1.33.6/opentelemetry-javaagent.jar"
+          cp "$jar" build-context/service.jar
+
+      - name: Build and push
+        id: build
+        uses: docker/build-push-action@v6
+        with:
+          context: build-context
+          file: ops/containers/service.Dockerfile
+          build-args: JAR=service.jar
+          push: true
+          tags: ghcr.io/logistics-os/${{ matrix.service }}:${{ needs.validate.outputs.tag }}
+          provenance: true
+          sbom: true
+
+      - name: Install cosign
+        if: github.event.inputs.sign != 'false'
+        uses: sigstore/cosign-installer@v3
+
+      - name: Sign image (keyless)
+        if: github.event.inputs.sign != 'false'
+        run: |
+          cosign sign --yes \
+            ghcr.io/logistics-os/${{ matrix.service }}@${{ steps.build.outputs.digest }}
+
+  publish:
+    name: publish GitHub release
+    needs: [validate, build]
+    if: needs.validate.outputs.customer == ''
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ needs.validate.outputs.version }}
+        run: |
+          notes="docs/releases/${VERSION}.md"
+          if [ -f "$notes" ]; then
+            gh release create "v${VERSION}" --title "v${VERSION}" --notes-file "$notes"
+          else
+            gh release create "v${VERSION}" --title "v${VERSION}" --generate-notes
+          fi

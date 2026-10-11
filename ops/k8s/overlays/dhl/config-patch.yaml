@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: logistics-os-env
+data:
+  DEFAULT_TENANT: "dhl"
+  COMPANY: "dhl"
+  ENTITLEMENT_EDITION: "enterprise"
+  OTEL_EXPORTER_OTLP_ENDPOINT: "http://otel-collector.logistics-os-dhl.svc.cluster.local:4317"
+  ENTITLEMENT_LICENSE: '{"licenseId":"LIC-DHL-0001","tenant":"dhl","edition":"enterprise","version":"0.2.0","expiresAt":"2027-01-01T00:00:00Z","features":{"l5_orchestration":true,"sso_saml":true,"ops_actions":true}}'

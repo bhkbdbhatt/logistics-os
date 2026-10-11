@@ -1,0 +1,48 @@
+# L5 orchestrator (stub) — deployed only by editions that include orchestration (Enterprise).
+# Not referenced by the base kustomization; customer/edition overlays add it explicitly.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orchestrator
+  namespace: logistics-os
+  labels:
+    app.kubernetes.io/name: orchestrator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: orchestrator
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: orchestrator
+    spec:
+      containers:
+        - name: orchestrator
+          image: ghcr.io/logistics-os/orchestrator:0.2.0
+          ports:
+            - containerPort: 8090
+          envFrom:
+            - configMapRef:
+                name: logistics-os-env
+          env:
+            - name: SERVER_PORT
+              value: "8090"
+          readinessProbe:
+            tcpSocket:
+              port: 8090
+          resources:
+            requests: {cpu: "200m", memory: "384Mi"}
+            limits: {cpu: "1000m", memory: "768Mi"}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: orchestrator
+  namespace: logistics-os
+spec:
+  selector:
+    app.kubernetes.io/name: orchestrator
+  ports:
+    - port: 8090
+      targetPort: 8090

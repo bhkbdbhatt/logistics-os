@@ -1,0 +1,38 @@
+# SKU: professional — everything in Standard plus operator actions, quotas, and DLQ tooling.
+name: professional
+title: Logistics OS Professional
+tier: 2
+description: >
+  Decide and act. Adds the ops BFF (one-click idempotent actions), per-tenant quotas, and DLQ/replay
+  tooling on top of the Standard read models.
+status: ga
+support_tier: standard
+default_version: 1.0.0
+channels: [stable, beta]
+services:
+  - name: ingest-gateway
+    module: core/ingest-gateway
+  - name: acl-tms
+    module: core/acl-tms
+  - name: acl-wms
+    module: core/acl-wms
+  - name: mdm
+    module: core/mdm
+  - name: read-model-builder
+    module: core/read-model-builder
+  - name: control-tower
+    module: core/control-tower
+  - name: bff-ops
+    module: core/bff-ops
+features:
+  canonical_model: true
+  cqrs_read_models: true
+  control_tower_readonly: true
+  logical_tenant: true
+  ops_actions: true
+  tenant_quotas: true
+  l5_orchestration: false
+  dedicated_isolation: false
+  sso_saml: false
+  audit_retention_7y: false
+  analytics_exports: false

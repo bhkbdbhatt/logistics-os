@@ -6,6 +6,7 @@ include("platform:outbox")
 include("platform:idempotency")
 include("platform:tenant")
 include("platform:observability")
+include("platform:entitlement")
 
 include("core:ingest-gateway")
 include("core:acl-tms")
