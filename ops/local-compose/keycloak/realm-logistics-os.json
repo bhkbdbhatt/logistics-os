@@ -4,13 +4,22 @@
   "displayName": "Logistics OS",
   "sslRequired": "external",
   "registrationAllowed": false,
-  "loginWithEmailAllowed": true,
+  "loginWithEmailAllowed": false,
   "accessTokenLifespan": 3600,
   "roles": {
     "realm": [
-      { "name": "viewer", "description": "Read-only access" },
-      { "name": "operator", "description": "Can trigger one-click actions" },
-      { "name": "admin", "description": "Administrative access" }
+      {
+        "name": "viewer",
+        "description": "Read-only access"
+      },
+      {
+        "name": "operator",
+        "description": "Can trigger one-click actions"
+      },
+      {
+        "name": "admin",
+        "description": "Administrative access"
+      }
     ]
   },
   "clients": [
@@ -26,7 +35,9 @@
         "http://localhost:8092/*",
         "http://localhost:5173/*"
       ],
-      "webOrigins": ["+"],
+      "webOrigins": [
+        "+"
+      ],
       "attributes": {
         "pkce.code.challenge.method": "S256"
       },
@@ -64,16 +75,32 @@
       "enabled": true,
       "email": "ops@example.com",
       "emailVerified": true,
-      "credentials": [{ "type": "password", "value": "ops", "temporary": false }],
-      "realmRoles": ["operator"]
+      "credentials": [
+        {
+          "type": "password",
+          "value": "ops",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "operator"
+      ]
     },
     {
       "username": "viewer",
       "enabled": true,
       "email": "viewer@example.com",
       "emailVerified": true,
-      "credentials": [{ "type": "password", "value": "viewer", "temporary": false }],
-      "realmRoles": ["viewer"]
+      "credentials": [
+        {
+          "type": "password",
+          "value": "viewer",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "viewer"
+      ]
     }
   ]
 }

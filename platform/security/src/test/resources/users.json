@@ -1,6 +1,21 @@
 {
   "users": [
-    { "username": "alice", "password": "{noop}secret", "tenant": "acme", "roles": ["operator", "viewer"] },
-    { "username": "bob", "password": "{noop}hunter2", "tenant": "globex", "roles": ["viewer"] }
+    {
+      "username": "alice",
+      "password": "alice",
+      "tenant": "acme",
+      "roles": [
+        "operator",
+        "viewer"
+      ]
+    },
+    {
+      "username": "bob",
+      "password": "bob",
+      "tenant": "globex",
+      "roles": [
+        "viewer"
+      ]
+    }
   ]
 }
