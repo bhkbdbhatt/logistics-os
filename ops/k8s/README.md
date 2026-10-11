@@ -20,8 +20,9 @@ kubectl apply -k ops/k8s
 
 ## Notes / gaps (deferred, as documented in the WPs)
 
-- **Images** are placeholders (`ghcr.io/logistics-os/<svc>:0.1.0`); container builds + registry are
-  added with the CI image pipeline.
+- **Images** are built + published to `ghcr.io/logistics-os/<svc>:0.2.0` by
+  `.github/workflows/images.yml` (see [docs/engineering-build.md](../../docs/engineering-build.md)
+  §6). For a full in-cluster rehearsal, use the `kind` smoke test in [ops/kind](../kind/).
 - **Kafka** is assumed reachable at `logistics-os-kafka:9092` (e.g. Strimzi/Amazon MSK KafkaOperator
   in-cluster, or an external broker via external-name service). Topics must be bootstrapped from the
   shared catalog (`ops/local-compose/topics.lst`) which is the single source of truth.

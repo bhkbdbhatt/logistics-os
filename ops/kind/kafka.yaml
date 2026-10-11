@@ -1,0 +1,85 @@
+# Single-broker Kafka for the smoke test only (KRaft mode, no ZooKeeper). The Service is named
+# `logistics-os-kafka` so it satisfies the shared `logistics-os-env` ConfigMap bootstrap address.
+# Do NOT use this manifest for anything beyond a throwaway kind cluster: plaintext, RF=1.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: logistics-os-kafka
+  namespace: logistics-os
+  labels:
+    app.kubernetes.io/name: logistics-os-kafka
+    app.kubernetes.io/part-of: logistics-os
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: logistics-os-kafka
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: logistics-os-kafka
+    spec:
+      containers:
+        - name: kafka
+          image: bitnami/kafka:3.7.1
+          ports:
+            - containerPort: 9092
+            - containerPort: 9093
+          env:
+            - name: KAFKA_CFG_NODE_ID
+              value: "0"
+            - name: KAFKA_CFG_PROCESS_ROLES
+              value: "controller,broker"
+            - name: KAFKA_CFG_CONTROLLER_QUORUM_VOTERS
+              value: "0@127.0.0.1:9093"
+            - name: KAFKA_CFG_LISTENERS
+              value: "PLAINTEXT://:9092,CONTROLLER://:9093"
+            - name: KAFKA_CFG_ADVERTISED_LISTENERS
+              value: "PLAINTEXT://logistics-os-kafka:9092"
+            - name: KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP
+              value: "CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT"
+            - name: KAFKA_CFG_CONTROLLER_LISTENER_NAMES
+              value: "CONTROLLER"
+            - name: KAFKA_CFG_INTER_BROKER_LISTENER_NAME
+              value: "PLAINTEXT"
+            - name: ALLOW_PLAINTEXT_LISTENER
+              value: "yes"
+            - name: KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE
+              value: "false"
+            - name: KAFKA_CFG_OFFSETS_TOPIC_REPLICATION_FACTOR
+              value: "1"
+            - name: KAFKA_CFG_TRANSACTION_STATE_LOG_REPLICATION_FACTOR
+              value: "1"
+            - name: KAFKA_CFG_TRANSACTION_STATE_LOG_MIN_ISR
+              value: "1"
+            - name: KAFKA_CFG_LOG_RETENTION_HOURS
+              value: "2"
+          readinessProbe:
+            exec:
+              command:
+                - /bin/bash
+                - -c
+                - /opt/bitnami/kafka/bin/kafka-broker-api-versions.sh --bootstrap-server localhost:9092 >/dev/null 2>&1
+            initialDelaySeconds: 20
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 12
+          resources:
+            requests: {cpu: "200m", memory: "512Mi"}
+            limits: {cpu: "1000m", memory: "1Gi"}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: logistics-os-kafka
+  namespace: logistics-os
+  labels:
+    app.kubernetes.io/name: logistics-os-kafka
+    app.kubernetes.io/part-of: logistics-os
+spec:
+  selector:
+    app.kubernetes.io/name: logistics-os-kafka
+  ports:
+    - name: plaintext
+      port: 9092
+      targetPort: 9092

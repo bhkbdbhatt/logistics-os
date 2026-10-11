@@ -12,3 +12,10 @@ subnet_ids = [
   "subnet-0cccc0000cccc0000",
 ]
 security_group_id = "sg-0dddd0000dddd0000"
+
+# Client authentication (M4). Defaults are all off (scaffold). For real environments enable
+# exactly one of SCRAM / IAM, optionally add mutual TLS, and tighten the security group.
+# client_auth_sasl_scram = true
+# client_auth_sasl_iam   = false
+# client_auth_tls        = false
+# client_auth_tls_ca_arns = ["arn:aws:acm-pca:eu-west-1:000000000000:certificate-authority/xxxx"]

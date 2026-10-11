@@ -28,6 +28,10 @@ spec:
               value: "8085"
             - name: STATE_DIR
               value: "/var/lib/logistics-os/rmb"
+            # Changelog/repartition topic RF; must match the cluster minimum. Raise to >=3 (or set
+            # to the MSK cluster's min in-sync replicas) in production; 1 targets single-broker kind.
+            - name: STREAMS_REPLICATION_FACTOR
+              value: "1"
           volumeMounts:
             - name: rmb-state
               mountPath: /var/lib/logistics-os/rmb

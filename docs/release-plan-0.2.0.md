@@ -12,6 +12,13 @@
 > images via `ops/containers/service.Dockerfile` with the OTel java agent baked in and OCI
 > provenance/SBOM attestations; `ops/k8s/apps/*` already referenced `:0.2.0`. Steps still needing a
 > live run: push a `v0.2.0` tag, verify digests + attestations, then `kind` smoke (M3).
+> M3 drafted: `ops/kind/` (cluster config, single-broker KRaft Kafka, topic catalog, `topic-bootstrap`
+> + `pipeline-probe` Jobs, `smoke.sh`) rehearses `kubectl apply -k ops/k8s` with an in-cluster E2E
+> (`legacy-simulator -> acl-tms -> canonical -> read-model`) and OTel trace check — needs a
+> Docker-capable host to execute.
+> M4 done (config + docs): MSK client auth parameterized (`client_auth_sasl_scram|iam|tls`);
+> `read-model-builder` Streams RF now `STREAMS_REPLICATION_FACTOR`-overridable and pinned in `ops/k8s`;
+> Schema-Registry switch documented; Terraform lockfile/destroy hygiene notes in place.
 > Scope decision (recorded): 0.1.0 proved the scaffold *builds and passes its own gates*; 0.2.0 turns
 > it into a **distributable artifact** — signed container images, an in-cluster smoke on `kind`, a
 > reproducible toolchain (Gradle wrapper), and the first Phase-2 surface (WMS payload completeness +

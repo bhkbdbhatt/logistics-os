@@ -1,0 +1,87 @@
+# One-shot Jobs for the smoke test: create topics from the shared catalog, then prove the
+# simulator -> ACL -> canonical -> read-model path by consuming one canonical event.
+# Reference: docs/release-plan-0.2.0.md M3.
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: topic-bootstrap
+  namespace: logistics-os
+  labels:
+    app.kubernetes.io/part-of: logistics-os
+spec:
+  backoffLimit: 10
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: topic-bootstrap
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: bootstrap
+          image: bitnami/kafka:3.7.1
+          command:
+            - /bin/bash
+            - -c
+            - |
+              set -euo pipefail
+              BOOTSTRAP="logistics-os-kafka:9092"
+              KAFKA_BIN="/opt/bitnami/kafka/bin"
+              echo "waiting for Kafka at ${BOOTSTRAP} ..."
+              for _ in $(seq 1 60); do
+                if "$KAFKA_BIN/kafka-broker-api-versions.sh" --bootstrap-server "$BOOTSTRAP" >/dev/null 2>&1; then
+                  break
+                fi
+                sleep 3
+              done
+              while IFS= read -r line; do
+                case "$line" in
+                  ""|\#*) continue ;;
+                esac
+                IFS=':' read -r name partitions cleanup <<< "$line"
+                conf=()
+                if [ "${cleanup:-}" = "compact" ]; then
+                  conf+=(--config cleanup.policy=compact --config retention.ms=-1)
+                fi
+                echo ">> $name (partitions=${partitions:-1}, cleanup=${cleanup:-delete})"
+                "$KAFKA_BIN/kafka-topics.sh" --bootstrap-server "$BOOTSTRAP" --create --if-not-exists \
+                  --topic "$name" --partitions "${partitions:-1}" --replication-factor 1 "${conf[@]}"
+              done < /etc/topics/topics.lst
+              echo "topic bootstrap complete"
+          volumeMounts:
+            - name: topics
+              mountPath: /etc/topics
+      volumes:
+        - name: topics
+          configMap:
+            name: logistics-os-topics
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: pipeline-probe
+  namespace: logistics-os
+  labels:
+    app.kubernetes.io/part-of: logistics-os
+spec:
+  backoffLimit: 20
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: pipeline-probe
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: probe
+          image: bitnami/kafka:3.7.1
+          command:
+            - /bin/bash
+            - -c
+            - |
+              set -euo pipefail
+              KAFKA_BIN="/opt/bitnami/kafka/bin"
+              echo "waiting for a canonical tms record (legacy-simulator -> acl-tms) ..."
+              "$KAFKA_BIN/kafka-console-consumer.sh" \
+                --bootstrap-server logistics-os-kafka:9092 \
+                --topic tms.shipment.events.v1 \
+                --max-messages 1 --timeout-ms 90000
+              echo "pipeline OK: canonical event observed"

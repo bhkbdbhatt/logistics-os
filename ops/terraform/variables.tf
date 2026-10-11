@@ -58,6 +58,33 @@ variable "kms_key_arn" {
   default     = ""
 }
 
+# --- Client authentication (M4 hardening). Defaults keep the scaffold unauthenticated; set these
+# for any real environment. SCRAM and IAM are mutually exclusive on MSK -- enable exactly one.
+
+variable "client_auth_sasl_scram" {
+  description = "Enable SASL/SCRAM client authentication (mutually exclusive with client_auth_sasl_iam)"
+  type        = bool
+  default     = false
+}
+
+variable "client_auth_sasl_iam" {
+  description = "Enable SASL/IAM client authentication (mutually exclusive with client_auth_sasl_scram)"
+  type        = bool
+  default     = false
+}
+
+variable "client_auth_tls" {
+  description = "Enable mutual TLS client authentication (requires client_auth_tls_ca_arns)"
+  type        = bool
+  default     = false
+}
+
+variable "client_auth_tls_ca_arns" {
+  description = "ACM Private CA ARNs trusted for mutual TLS client auth (required when client_auth_tls = true)"
+  type        = list(string)
+  default     = []
+}
+
 variable "tags" {
   description = "Common resource tags"
   type        = map(string)

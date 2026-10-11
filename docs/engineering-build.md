@@ -113,11 +113,15 @@ overrides the image default).
 
 ## 7. Deferred / known gaps (tracked)
 
-- No container registry pipeline images built yet; no wrapper → resolved in 0.2.0 (M0).
+- Container image pipeline added in 0.2.0 (`.github/workflows/images.yml` + `ops/containers/service.Dockerfile`);
+  still needs a live `v*` tag run to produce/attest the GHCR images. The `kind` smoke suite under
+  `ops/kind/` is written but not yet wired into CI (needs a Docker-capable runner).
 - Embedded-Kafka ITs need `spring-kafka-test` to pull `kafka_2.13` (JVM memory on CI runners).
-- `spring.kafka.streams.replication-factor: 1` must be raised per cluster (MSK requires matching
-  replication minimum). State-store topology is single-replica.
-- Cloud MSK has no client auth/Schema Registry yet (Phase-1 runs `schema.resource=true`).
+- `spring.kafka.streams.replication-factor` now reads `STREAMS_REPLICATION_FACTOR` (default `1`);
+  raise it per cluster to match the MSK replication minimum. State-store topology is single-replica.
+- MSK client auth (SASL/IAM + TLS) is parameterized in `ops/terraform` but defaults off; Schema
+  Registry is not deployed yet (Phase-1 runs `schema.resource=true`). See `ops/terraform/README.md`
+  → "MSK hardening (M4)".
 - WMS payloads (`wms.v1.WmsTaskEvent`, `wms.v1.InventoryMove`) are promoted to `canonical` in the
   registry; orchestration stubs remain `draft` and obs payloads remain `scaffold` status.
 

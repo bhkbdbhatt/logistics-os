@@ -21,11 +21,15 @@ module "msk" {
   # At-rest encryption; defaults to AWS-managed key unless a customer key is supplied.
   encryption_info_encryption_at_rest_kms_key_arn = var.kms_key_arn
 
-  # Client authentication is intentionally left unconfigured in the scaffold. Production
-  # deployments must enable SASL/IAM + TLS client auth and restrict the security group.
-  # e.g.
-  #   client_authentication_sasl_scram = { enabled = true }
-  #   client_authentication_sasl_iam    = { enabled = true }
+  # Client authentication (M4). All default to disabled in the scaffold; enable for real
+  # environments. SCRAM and IAM are mutually exclusive -- set only one. Pair with a tightened
+  # security group (var.security_group_id) and TLS in-transit.
+  client_authentication_sasl_scram = var.client_auth_sasl_scram ? { enabled = true } : null
+  client_authentication_sasl_iam   = var.client_auth_sasl_iam ? { enabled = true } : null
+  client_authentication_tls = var.client_auth_tls ? {
+    enabled                   = true
+    certificate_authority_arns = var.client_auth_tls_ca_arns
+  } : null
 
   tags = var.tags
 }

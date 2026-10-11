@@ -5,7 +5,7 @@ spring:
     bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
     streams:
       application-id: read-model-builder
-      replication-factor: 1
+      replication-factor: ${STREAMS_REPLICATION_FACTOR:1}
       state-dir: ${STATE_DIR:${java.io.tmpdir}/logistics-os-rmb}
       default:
         key.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
