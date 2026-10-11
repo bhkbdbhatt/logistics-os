@@ -1,148 +1,160 @@
 # Logistics OS
 
-Architecture documentation for a cloud-native, event-driven **Logistics Operating System** for mid-to-large **3PL/4PL** operators serving e-commerce and B2B. It unifies **TMS, WMS, YMS, OMS, carrier visibility, and billing** into one platform on a **Kafka** event backbone with microservices, and layers orchestration, intelligence, experience, and analytics on top.
+Cloud-native, event-driven **Logistics Operating System** for mid-to-large **3PL/4PL** operators serving
+e-commerce and B2B. It unifies **TMS, WMS, YMS, OMS, carrier visibility, and billing** on a **Kafka**
+event backbone with microservices, and layers orchestration, intelligence, experience, and analytics on top.
 
-> Docs-first repository: the canonical architecture and contracts live in `docs/`; a **Phase-1
-> buildable scaffold** (Gradle/Java 21 + Spring Boot, event backbone, ACLs, read models, MDM,
-> control-tower, BFFs) is implemented under `platform/`·`core/`·`tools/` with ops wiring under
-> `ops/`. See [ops/README.md](ops/README.md) to run it.
+This repository is a working **monorepo**, not just a design document: a buildable **Phase-1 scaffold**
+(Java 21 + Gradle 8.12.1 + Spring Boot 3.4.1) implementing the event backbone, anti-corruption layers,
+read models, MDM, control-tower and BFFs, plus a **React + TypeScript ops console**. The reference
+architecture, data model, event contracts and ADRs live under [`docs/`](docs/architecture.md).
 
-## Start here
+> **Status:** `0.1.0` scaffold → `0.2.0` distributable (images + kind smoke + MSK) → `0.3.0`
+> "Experience, identity & persistence" (draft). See [docs/releases/0.3.0.md](docs/releases/0.3.0.md)
+> and the plans in [docs/release-plan-0.3.0.md](docs/release-plan-0.3.0.md).
 
-1. **[docs/architecture.md](docs/architecture.md)** — the 7-layer architecture (observation → data → execution → intelligence → orchestration → experience → analytics), layer responsibilities, and sources of truth.
-2. **[docs/data-model.md](docs/data-model.md)** — canonical data objects and ownership.
-3. **[docs/events.md](docs/events.md)** — event envelope, topic catalog, delivery semantics, DLQ/replay.
-4. **[docs/schemas/](docs/schemas/README.md)** — canonical Avro/Protobuf event schemas (Shipment lifecycle, Vehicle/Location/Carrier/Customer) + exactly-once & idempotency contract.
-5. **[docs/services.md](docs/services.md)** — bounded-context service catalog.
-6. **[docs/integrations.md](docs/integrations.md)** — integration pattern per layer + anti-corruption rules.
-7. **[docs/integration-architecture.md](docs/integration-architecture.md)** — per-system integration design (ERP, OMS, carrier APIs, WCS/automation, mobile, customer tracking): sync/async, contract style, rate limiting, retry/idempotency, system of record + order→POD→settlement sequence.
-8. **[docs/build-vs-buy.md](docs/build-vs-buy.md)** — decision matrix and governed defaults; **[docs/build-vs-buy-catalog.md](docs/build-vs-buy-catalog.md)** — component-level recommendations (vendors + integration risk).
-9. **[docs/cross-cutting.md](docs/cross-cutting.md)** — tenancy, consistency, security, observability, resilience.
-10. **[docs/orchestration/](docs/orchestration/README.md)** — control-tower orchestration: workflow engine, trigger catalog, decision context, escalation, timed exception flow.
-11. **[docs/intelligence/](docs/intelligence/README.md)** — L4 optimization & prediction: route optimization, predictive ETA, carrier selection, network simulation + the advisory contract with orchestration.
-12. **[docs/analytics/](docs/analytics/README.md)** — L6/L7 control tower & analytics: real-time dashboard, alerts, one-click actions, shipment cost attribution, carrier scorecards, network what-if + the event→store pipeline tiers.
-13. **[docs/roadmap.md](docs/roadmap.md)** — 3-phase implementation roadmap (scope, deliverables, team, exit KPIs, risks) from a disconnected TMS/WMS baseline.
-14. **[docs/nfr.md](docs/nfr.md)** — non-functional requirements: availability, latency budgets, retention, scalability, security/sovereignty, DR (RPO/RTO), observability (P0/P1/P2).
-15. **[docs/orchestration/autonomous-agents.md](docs/orchestration/autonomous-agents.md)** — how rule/LLM-based agents decide: automated vs. human-in-the-loop archetypes, context window, guardrails & rollback, performance-vs-baseline measurement, worked warehouse-agent trace.
-
-## Phase-1 buildable scaffold
-
-Docs-first aside, the repo now contains a buildable Phase-1 scaffold (Java 21 + Gradle + Spring
-Boot) implementing the event backbone slice of the architecture:
+## Repository layout
 
 ```
-platform/  event-envelope · kafka-commons · outbox · idempotency · tenant · observability · entitlement
+platform/  event-envelope · kafka-commons · outbox · idempotency · tenant · observability · entitlement · persistence · security
 core/      ingest-gateway · acl-tms · acl-wms · mdm · read-model-builder · control-tower · bff-ops · phase2-stubs/orchestrator
-tools/     legacy-simulator          ops/    local-compose · terraform · k8s (+ overlays)   .github/  CI · images · smoke · release
-contracts/ avro schemas · registry · validation · baselines
+web/       React + TypeScript + Vite ops console (fronts the platform through bff-ops)
+tools/     legacy-simulator        contracts/ avro schemas · registry · validation · baselines
 editions/  sellable SKU catalog (standard · professional · enterprise) + versions
+ops/       local-compose · terraform (AWS MSK) · k8s (+ overlays) · containers · kind
+.github/   CI · images · smoke · release · web
 ```
 
-**Run it** (see [ops/local-compose/README.md](ops/local-compose/README.md) and
-[docs/engineering-build.md](docs/engineering-build.md)):
+## What's implemented
+
+### Event backbone & platform libraries
+
+| Module | Role |
+|--------|------|
+| `platform:event-envelope` | `EventEnvelope`, builder, ULID ids, codec |
+| `platform:kafka-commons` | serde, `SchemaResolvers`, `PayloadAvro`, `EnvelopeRouting` |
+| `platform:outbox` | outbox port + in-memory repo (transactional publish seam) |
+| `platform:idempotency` | dedupe store port (claim / record / release) |
+| `platform:tenant` | request-scoped `TenantContext` |
+| `platform:observability` | OpenTelemetry wiring helpers |
+| `platform:entitlement` | edition feature flags + licensing seam (soft enforcement) |
+| `platform:persistence` | `JdbcOutboxRepository`, `JdbcDedupeStore`, shared Flyway migrations (`V900+`) |
+| `platform:security` | stateless OAuth2 resource server (`oidc`/`local` modes) + tenant filter |
+
+### Core services
+
+| Service | Layer | Port | Role |
+|---------|-------|------|------|
+| `core:ingest-gateway` | L1 | 8081 | REST ingest → `obs.*` canonical (dedupe) |
+| `core:acl-tms` | L1 | 8083 | legacy TMS JSON → `tms.shipment.events.v1` |
+| `core:acl-wms` | L1 | 8084 | legacy WMS JSON → obs/wms canonical |
+| `core:read-model-builder` | L2 | 8085 | CQRS projections → `shipment/inventory.state.v1` |
+| `core:mdm` | L2 | 8086 | golden records → `mdm.*.events.v1` (compacted) |
+| `core:control-tower` | L5/L6 | 8087 | live ops, alerts, one-click `orch.command.v1` |
+| `core:bff-ops` | L6 | 8088 | compose-only BFF (no domain logic) |
+| `core:phase2-stubs:orchestrator` | L5 | 8090 | Phase-2 command stub (`POST /orch/commands`, heartbeat) |
+| `tools:legacy-simulator` | — | 8089 | scheduled legacy feed emitter |
+
+### Ops console (`web/`)
+
+React + TypeScript + Vite SPA served by nginx that talks **only** to `bff-ops` (ADR-0022). Surfaces:
+dashboard (shipment/alert counts, source health, edition badge), shipment list + detail with the
+operator-gated "Notify customer" action, and Alerts. Auth supports `local` (HS256 via `POST /auth/login`)
+and `oidc` (Authorization Code + PKCE). See [web/README.md](web/README.md).
+
+### Identity, persistence & outbox (0.3.0)
+
+- **Security** (`platform:security`): `mode=oidc` validates Keycloak JWTs (lazy JWKS); `mode=local`
+  (default) issues/validates HS256 dev tokens. `TenantContextFilter` binds the tenant from the
+  `tenant_id` claim and rewrites `X-Tenant-Id`. Roles `viewer`/`operator`/`admin`. Wired into
+  `mdm`, `ingest-gateway`, `control-tower` and `bff-ops`; `bff-ops` relays the caller's bearer token.
+- **Persistence** (`platform:persistence`): JDBC outbox + idempotency stores. **MDM** becomes a
+  PostgreSQL system-of-record under the `jdbc` profile — golden records are upserted with optimistic
+  versioning and the change event is written to the outbox in the **same transaction**, then dispatched
+  by a scheduled relay. Without the profile, MDM keeps the in-memory registry + direct publish.
+
+### Contracts, editions & ops
+
+- `contracts/` — Avro schemas, registry (`kind: event|command|observation`), validation gates and
+  baselines; governed by `reconcile.sh` + `snapshot-baselines.sh`.
+- `editions/` — sellable SKU catalog (`standard`/`professional`/`enterprise`) + version pins.
+- `ops/` — Docker Compose local stack (Kafka + Postgres + Keycloak + web), AWS MSK Terraform, Kustomize
+  k8s base + per-customer overlays, container recipes and the `kind` smoke suite. See [ops/README.md](ops/README.md).
+
+## Build & test
+
+The Gradle wrapper is the sole build entrypoint (no system Gradle assumed):
+
+```bash
+./gradlew build                                    # compile + unit tests + embedded-Kafka ITs + assemble
+./gradlew :contracts:validation:validateSchemas    # schema/registry contract gate
+./gradlew :core:mdm:test                           # single module
+./gradlew :core:mdm:bootJar                        # build a deployable jar
+```
+
+Contract governance:
+
+```bash
+bash contracts/scripts/reconcile.sh                    # registry vs docs/schemas drift
+bash contracts/scripts/snapshot-baselines.sh           # baseline drift check (WARN-only docs backlog)
+bash contracts/scripts/snapshot-baselines.sh --write   # after intentional schema changes
+```
+
+Web console:
+
+```bash
+cd web
+npm install
+npm run dev        # http://localhost:5173, proxying /ops,/auth to http://localhost:8088
+npm run build      # tsc --noEmit + production build to dist/
+```
+
+## Run locally
+
+See [ops/local-compose/README.md](ops/local-compose/README.md) and
+[docs/engineering-build.md](docs/engineering-build.md). Short form:
 
 ```bash
 docker compose -f ops/local-compose/docker-compose.yml up -d
 docker compose -f ops/local-compose/docker-compose.yml run --rm topic-bootstrap
-gradle :core:mdm:bootRun        # + read-model-builder, control-tower, bff-ops, legacy-simulator
+./gradlew :core:mdm:bootRun          # + read-model-builder, control-tower, bff-ops, legacy-simulator
 ```
 
-CI gates (`.github/workflows/ci.yml`): `validateSchemas` → `reconcile.sh` → baseline drift check →
-full `gradle build` (unit + embedded-Kafka ITs).
+Postgres backend for MDM (transactional outbox) is enabled with the `jdbc` profile:
 
-## Documentation map
-
-```
-README.md
-LICENSE                       # proprietary EULA (see docs/product/licensing.md)
-THIRD-PARTY-NOTICES.md        # OSS component disclosures (summary; release SBOM is authoritative)
-docs/
-├─ engineering-build.md        # build/test/run/container/deploy runbook (Phase-1 scaffold)
-├─ release-plan.md             # 0.1.0 scope, DoD, milestones, risks, 0.2.0 backlog
-├─ release-plan-0.2.0.md       # 0.2.0 scope (images + k8s smoke + MSK + wrapper), DoD, milestones, risks
-├─ release-plan-0.3.0.md       # 0.3.0 scope (frontend + auth + persistence), DoD, milestones, risks
-├─ releases/
-│  └─ 0.2.0.md                 # 0.2.0 release notes (draft; digests/transcript filled at cut)
-├─ product/                    # commercial model: editions, licensing, versioning, delivery
-│  ├─ editions.md              # sellable SKUs (standard/professional/enterprise) + customer branding
-│  ├─ licensing.md             # entitlements (soft now, signed license later)
-│  ├─ versioning-support.md    # semver, channels (stable/lts/beta), support windows, upgrades
-│  └─ packaging-delivery.md    # hosted SaaS vs self-hosted release artifacts
-├─ architecture.md            # layered architecture + sources of truth
-├─ data-model.md              # canonical objects, ownership, lifecycles
-├─ events.md                  # envelope, topics, delivery, replay
-├─ services.md                # bounded-context catalog
-├─ integrations.md            # per-layer integration + ACL rules
-├─ integration-architecture.md # per-system integration design + ownership
-├─ build-vs-buy.md            # decision matrix + rubric
-├─ build-vs-buy-catalog.md    # per-component build/buy + vendors + integration risk
-├─ roadmap.md                 # 3-phase implementation roadmap (scope/team/KPIs/risks)
-├─ nfr.md                     # availability, latency, retention, scale, security, DR, observability
-├─ cross-cutting.md           # tenancy, consistency, security, ops
-├─ schemas/                   # canonical Avro/Protobuf contracts
-│  ├─ README.md               # schema index
-│  ├─ common-types.md         # envelope, shared types, exactly-once/idempotency
-│  ├─ shipment-events.md      # shipment lifecycle events
-│  ├─ reference-data.md       # Customer/Carrier/Vehicle/Location
-│  ├─ orchestration-events.md # triggers, decision context, escalations, commands
-│  ├─ intelligence-events.md  # predictions, recommendations, model, simulation, feedback
-│  └─ analytics-events.md     # operational alerts, cost attribution, carrier scorecards
-├─ orchestration/             # L5 orchestration design
-│  ├─ README.md               # component model + responsibilities
-│  ├─ workflow-engine.md      # durable saga + statechart engine
-│  ├─ trigger-catalog.md      # trigger conditions + re-opt triggers + coalescing
-│  ├─ decision-context.md     # decision context object + policy routing
-│  ├─ autonomous-agents.md    # agents: what may automate, context window, guardrails
-│  ├─ escalation.md           # autonomy tiers, escalation ladder, SLA timers
-│  ├─ exception-flow.md       # end-to-end timed late-inbound cascade
-│  └─ diagrams/               # state machine, pipeline, cascade sequence, routing
-├─ intelligence/              # L4 optimization & prediction design
-│  ├─ README.md               # serving modes, orchestration contract, SLAs
-│  ├─ route-optimization.md   # VRP/load building, constraints, re-opt cadence
-│  ├─ predictive-eta.md       # quantile ETA model, features, drift, serving
-│  ├─ carrier-selection.md    # acceptance/cost/risk scoring + allocation
-│  ├─ network-simulation.md   # digital-twin what-if + calibration
-│  └─ diagrams/               # pipeline, ETA serving, carrier scoring, sim loop
-├─ analytics/                 # L6/L7 control tower & analytics design
-│  ├─ README.md               # pipeline tiers + latency budgets
-│  ├─ control-tower.md        # dashboard, alerts, one-click actions
-│  ├─ cost-attribution.md     # fixed + variable cost per shipment, real-time
-│  ├─ carrier-scorecards.md   # dimensions, sources, re-weighting
-│  ├─ network-simulation.md   # what-if inputs/outputs (analytics view)
-│  └─ diagrams/               # analytics pipeline, cost attribution, scorecard
-├─ diagrams/
-│  ├─ layers.mmd              # layered architecture (Mermaid)
-│  ├─ event-flow.mmd          # order-to-cash sequence (Mermaid)
-│  ├─ order-pod-settlement.mmd # order → POD → settlement, all touchpoints (Mermaid)
-│  ├─ roadmap.mmd             # 3-phase implementation Gantt (Mermaid)
-│  └─ context.mmd             # system context (Mermaid)
-└─ adr/
-   ├─ 0000-adr-index.md
-   ├─ 0001-event-driven-kafka-backbone.md
-   ├─ 0002-microservices-bounded-contexts.md
-   ├─ 0003-cqrs-read-models.md
-   ├─ 0004-saga-over-distributed-tx.md
-   ├─ 0005-buy-execution-build-orchestration.md
-   ├─ 0006-multi-tenant-isolation-model.md
-   ├─ 0007-outbox-and-idempotency.md
-   ├─ 0008-schema-registry-and-versioning.md
-   ├─ 0009-canonical-model-as-moat.md
-   ├─ 0010-cots-strangler-and-anti-corruption.md
-   ├─ 0011-orchestration-saga-statechart-engine.md
-   ├─ 0012-policy-based-human-in-the-loop.md
-   ├─ 0013-exception-cascade-and-reopt-coalescing.md
-   ├─ 0014-optimization-and-inference-architecture.md
-   ├─ 0015-digital-twin-network-simulation.md
-   ├─ 0016-external-integration-contract.md
-   ├─ 0017-analytics-tiering-streaming-first.md
-   ├─ 0018-autonomous-agent-architecture.md
-   ├─ 0019-repository-and-build-runtime.md
-   ├─ 0020-identity-authentication-authorization.md
-   ├─ 0021-persistence-and-transactional-outbox.md
-   └─ 0022-experience-layer-and-frontend.md
+```bash
+SPRING_PROFILES_ACTIVE=jdbc MDM_DB_URL=jdbc:postgresql://localhost:5432/mdm \
+MDM_DB_USER=logistics MDM_DB_PASSWORD=logistics ./gradlew :core:mdm:bootRun
 ```
 
-## Architecture at a glance
+Servers are secured in `0.3.0`; fetch a dev token first (`admin`/`admin`, `ops`/`ops`, `viewer`/`viewer`):
+
+```bash
+TOKEN=$(curl -s -X POST http://localhost:8088/auth/login \
+  -H "Content-Type: application/json" -d '{"username":"ops","password":"ops"}' \
+  | python -c "import sys,json;print(json.load(sys.stdin)['access_token'])")
+curl -H "Authorization: Bearer $TOKEN" http://localhost:8088/ops/overview
+```
+
+## CI
+
+`.github/workflows/` — `ci.yml` (contract gates → `gradle build` with embedded-Kafka ITs), `web.yml`
+(SPA typecheck + build), `images.yml` (service + `web` images to GHCR with OCI provenance/SBOM),
+`smoke.yml` (kind E2E on manual/nightly) and `release.yml` (edition build → push → cosign sign).
+
+## Reference architecture (docs)
+
+The canonical design lives under [`docs/`](docs/):
+
+- [docs/architecture.md](docs/architecture.md) — 7-layer architecture + sources of truth
+- [docs/data-model.md](docs/data-model.md) · [docs/events.md](docs/events.md) · [docs/schemas/](docs/schemas/README.md) — canonical objects, event envelope/topics, Avro/Protobuf contracts
+- [docs/services.md](docs/services.md) · [docs/integrations.md](docs/integrations.md) · [docs/integration-architecture.md](docs/integration-architecture.md) — bounded contexts and integration design
+- [docs/cross-cutting.md](docs/cross-cutting.md) · [docs/nfr.md](docs/nfr.md) — tenancy/consistency/security/observability and non-functional requirements
+- [docs/orchestration/](docs/orchestration/README.md) · [docs/intelligence/](docs/intelligence/README.md) · [docs/analytics/](docs/analytics/README.md) — L4/L5/L6 design
+- [docs/build-vs-buy.md](docs/build-vs-buy.md) · [docs/roadmap.md](docs/roadmap.md) · [docs/product/](docs/product/editions.md) — decisions, roadmap, commercial model
+- [docs/adr/](docs/adr/0000-adr-index.md) — architecture decision records (0001–0022)
+
+Architecture at a glance (source: [`docs/diagrams/layers.mmd`](docs/diagrams/layers.mmd)):
 
 ```
 7. Analytics/AI   lakehouse · semantic layer · ML · digital twin
@@ -153,8 +165,6 @@ docs/
 2. Data           Kafka backbone · event store · canonical models · CQRS views · MDM
 1. Observation    IoT/telematics · GPS · scanners · cameras · EDI/API feeds · edge
 ```
-
-Diagram source: [`docs/diagrams/layers.mmd`](docs/diagrams/layers.mmd). Flow: [`docs/diagrams/event-flow.mmd`](docs/diagrams/event-flow.mmd).
 
 ## Core principles
 
@@ -178,9 +188,9 @@ mmdc -i docs/diagrams/roadmap.mmd    -o docs/diagrams/roadmap.svg
 mmdc -i docs/diagrams/context.mmd    -o docs/diagrams/context.svg
 ```
 
-Layer-specific diagram folders (`docs/orchestration/diagrams/`, `docs/intelligence/diagrams/`, `docs/analytics/diagrams/`) follow the same `mmdc -i … -o …` usage.
-
 ## Conventions
 
 - Markdown + Mermaid; ADRs follow Michael Nygard's format and are immutable once `Accepted`.
 - Topic naming: `<layer>.<domain>.<event-type>.vN`; partition key = aggregate id.
+- Code: Java 21 / Kotlin JVM 21 modules with version-catalog plugins only; the ops console is
+  BFF-only ([ADR-0022](docs/adr/0022-experience-layer-and-frontend.md)).
